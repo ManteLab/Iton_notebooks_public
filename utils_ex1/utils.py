@@ -4,33 +4,27 @@ from matplotlib.widgets import Slider, Button
 from IPython.display import display, clear_output
 import ipywidgets as widgets
 from scipy.constants import R, physical_constants
-
-px = 1 / plt.rcParams['figure.dpi']
+px = 1/plt.rcParams['figure.dpi']
 
 from matplotlib.patches import Arrow
 from IPython.display import display, clear_output, HTML
-
 
 def rc_euler(Vs, V0, R, C, dt, t):
     V_t = np.zeros(t.shape)
     V_t[0] = V0
     for i in range(1, len(t)):
-        V_t[i] = (1 - np.exp(-dt / (R * C))) * Vs + np.exp(-dt / (R * C)) * V_t[
-            i - 1]  # (1 - np.exp(-dt / (R * C))) * V_t[i - 1] + (1 - np.exp(-dt / (R*C))) * Vs
+        V_t[i] = (1 - np.exp(-dt / (R*C)))*Vs + np.exp(-dt / (R * C)) * V_t[i - 1]  # (1 - np.exp(-dt / (R * C))) * V_t[i - 1] + (1 - np.exp(-dt / (R*C))) * Vs
     return V_t
 
-
 def rc_charging_exact(Vs, R, C, t):
-    return Vs * (1 - np.exp(-(t / 1000) / (R * C)))
-
+    return Vs * (1 - np.exp(-(t/1000) / (R * C)))
 
 def rc_discharging_exact(V0, R, C, t):
-    return V0 * np.exp(-(t / 1000) / (R * C))
-
+    return V0 * np.exp(-(t/1000) / (R * C))
 
 def plot_vc_slider(Vs_default=5, R_default=10000, C_default=0.000005, V0=0):
-    px = 1 / plt.rcParams['figure.dpi']
-    t = np.arange(0, 100, 1)  # Time in ms
+    px = 1/plt.rcParams['figure.dpi']
+    t = np.arange(0, 100, 1) # Time in ms
     fig, ax = plt.subplots(1, 1, figsize=(800 * px, 600 * px))
 
     Vc_euler_data_default = rc_euler(Vs_default, V0, R_default, C_default, 0.001, t)  # Use a time step of 1 ms
@@ -109,8 +103,7 @@ def plot_vc_tc_slider(plot_vertical_tc=False):
 
     exp_minus_1_data_default = Vs_default * (1 - np.exp(-1)) * np.ones(t.shape)
     exp_minus_1_line = \
-        ax.plot(t, exp_minus_1_data_default, label=r'$Vs*(1 - e^{-1})=0.63*Vs$', linestyle='dashed',
-                linewidth=400 * px)[0]
+    ax.plot(t, exp_minus_1_data_default, label=r'$Vs*(1 - e^{-1})=0.63*Vs$', linestyle='dashed', linewidth=400 * px)[0]
 
     if plot_vertical_tc:
         vertical_tc_data_default = R_default * C_default * 1000
@@ -180,19 +173,16 @@ def plot_vc_tc_slider(plot_vertical_tc=False):
 def nernst_potential(z, Cin, Cout, T):
     return (R_constant * T / (z * F_constant)) * np.log(Cout / Cin) * 1000  # in mV
 
-
 # Nernst-Planck equation function
 def nernst_planck_flux(D_i, C_i, z_i, dVdx, dCdx, T):
-    J_i = -D_i * (dCdx + (z_i * F_constant / (R_constant * T)) * C_i * dVdx)
-    return J_i
-
+        J_i = -D_i * (dCdx + (z_i * F_constant / (R_constant * T)) * C_i * dVdx)
+        return J_i
 
 # GHK equation function
 def ghk_potential(PK, PNa, PCl, K_in, K_out, Na_in, Na_out, Cl_in, Cl_out, T):
     num = PK * K_out + PNa * Na_out + PCl * Cl_in
     denom = PK * K_in + PNa * Na_in + PCl * Cl_out
     return (R_constant * T / F_constant) * np.log(num / denom) * 1000  # in mV
-
 
 # Faraday constant (F) from scipy's physical_constants
 F_constant = physical_constants['Faraday constant'][0]
@@ -249,7 +239,6 @@ def plot_cable_v():
     # ax.grid()
     plt.show()
 
-
 def nernst_interactive_plot():
     # Ion properties
     ions = ['K⁺', 'Na⁺', 'Cl⁻']
@@ -257,7 +246,7 @@ def nernst_interactive_plot():
 
     # Colors for plotting
     colors = {
-        'K⁺': '#1f77b4',  # blue
+        'K⁺': '#1f77b4',   # blue
         'Na⁺': '#ff7f0e',  # orange
         'Cl⁻': '#2ca02c',  # green
         'membrane': '#9467bd'  # purple
@@ -295,7 +284,7 @@ def nernst_interactive_plot():
         style=slider_style, layout=slider_layout
     )
 
-    # Output area for the plot and the Nernst potential
+    # Output area for the plot
     output_area = widgets.Output()
 
     def update_plot(*args):
@@ -313,7 +302,7 @@ def nernst_interactive_plot():
             E_ion = nernst_potential(z, Cin, Cout, T)
 
             # Visualization
-            fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+            fig, ax = plt.subplots(figsize=(8, 8))
 
             # Draw cell membrane
             theta = np.linspace(0, 2 * np.pi, 100)
@@ -342,7 +331,6 @@ def nernst_interactive_plot():
             # Adjust plot
             ax.set_xlim(-1.5, 1.5)
             ax.set_ylim(-1.5, 1.5)
-            ax.set_title(f"Ion Distribution for {ion}")
             ax.set_aspect('equal', 'box')
             ax.axis('off')
 
@@ -354,12 +342,11 @@ def nernst_interactive_plot():
             ]
             ax.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(1.3, 1))
 
+            ax.set_title(f"Ion Distribution for {ion}\n")
+            ax.text(0, -1.4, f"Nernst Potential for {ion}: {E_ion:.2f} mV", fontsize=12, ha='center')
+
             plt.tight_layout()
             plt.show()
-
-            # Display Nernst potential using IPython.display.HTML
-            voltage_display = HTML(f"<b>Nernst Potential for {ion}:</b> {E_ion:.2f} mV")
-            display(voltage_display)
 
     # Link the widgets to the plot
     ion_dropdown.observe(update_plot, 'value')
@@ -398,7 +385,6 @@ def nernst_interactive_plot():
     # Initial plot
     update_sliders()
 
-
 def nernst_planck_interactive_plot():
     # Ion properties
     ions = ['K⁺', 'Na⁺', 'Cl⁻']
@@ -407,7 +393,7 @@ def nernst_planck_interactive_plot():
 
     # Colors for plotting
     colors = {
-        'K⁺': '#1f77b4',  # blue
+        'K⁺': '#1f77b4',   # blue
         'Na⁺': '#ff7f0e',  # orange
         'Cl⁻': '#2ca02c',  # green
         'membrane': '#9467bd'  # purple
@@ -427,25 +413,17 @@ def nernst_planck_interactive_plot():
     )
 
     # Sliders for ion concentrations
-    Cin_slider = widgets.FloatSlider(value=140, min=1, max=400, step=1, description='[Ion]_in (mM)',
-                                     continuous_update=False, style=slider_style, layout=slider_layout)
-    Cout_slider = widgets.FloatSlider(value=5, min=1, max=400, step=1, description='[Ion]_out (mM)',
-                                      continuous_update=False, style=slider_style, layout=slider_layout)
+    Cin_slider = widgets.FloatSlider(value=140, min=1, max=400, step=1, description='[Ion]_in (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
+    Cout_slider = widgets.FloatSlider(value=5, min=1, max=400, step=1, description='[Ion]_out (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
 
     # Membrane potential slider
-    V_mem_slider = widgets.FloatSlider(value=-70e-3, min=-0.1, max=0.1, step=1e-3, description='V_mem (V)',
-                                       continuous_update=False, style=slider_style, layout=slider_layout)
+    V_mem_slider = widgets.FloatSlider(value=-70e-3, min=-0.1, max=0.1, step=1e-3, description='V_mem (V)', continuous_update=False, style=slider_style, layout=slider_layout)
 
     # Temperature slider
-    T_slider = widgets.FloatSlider(value=T_default, min=273, max=373, step=1, description='Temperature (K)',
-                                   continuous_update=False, style=slider_style, layout=slider_layout)
+    T_slider = widgets.FloatSlider(value=T_default, min=273, max=373, step=1, description='Temperature (K)', continuous_update=False, style=slider_style, layout=slider_layout)
 
     # Output area for the plot
     output_area = widgets.Output()
-
-    def nernst_planck_flux(D_i, C_i, z_i, dVdx, dCdx, T):
-        J_i = -D_i * (dCdx + (z_i * F_constant / (R_constant * T)) * C_i * dVdx)
-        return J_i
 
     def update_plot(*args):
         with output_area:
@@ -478,7 +456,7 @@ def nernst_planck_interactive_plot():
             avg_J = np.mean(J)
 
             # Visualization
-            fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+            fig, ax = plt.subplots(figsize=(8, 8))
 
             # Draw cell membrane
             theta = np.linspace(0, 2 * np.pi, 100)
@@ -504,15 +482,18 @@ def nernst_planck_interactive_plot():
             y_out = r_out * np.sin(theta_out)
             ax.scatter(x_out, y_out, color=color, s=10, alpha=0.5)
 
-            # Show flux arrow
+            # Show flux arrow 
+            arrow_length = 0.2
+
             if avg_J < 0:
                 # Flux from inside to outside
                 start_radius = 0.9
-                end_radius = 1.1
+                end_radius = start_radius + arrow_length
             else:
                 # Flux from outside to inside
                 start_radius = 1.1
-                end_radius = 0.9
+                end_radius = start_radius - arrow_length
+
             angle = 0  # Arbitrary angle
             start_x = start_radius * np.cos(angle)
             start_y = start_radius * np.sin(angle)
@@ -520,30 +501,29 @@ def nernst_planck_interactive_plot():
             end_y = end_radius * np.sin(angle)
             dx = end_x - start_x
             dy = end_y - start_y
-            ax.arrow(start_x, start_y, dx, dy, head_width=0.05, head_length=0.05, fc=color, ec=color, linewidth=2)
 
             # Adjust plot
             ax.set_xlim(-1.5, 1.5)
             ax.set_ylim(-1.5, 1.5)
             ax.set_title(f"Ion Flux Across Neuron Membrane for {ion}")
+            ax.text(0, -1.4, f"Average Flux: {avg_J:.2e} mol/(m²·s)", fontsize=12, ha='center')
             ax.set_aspect('equal', 'box')
             ax.axis('off')
+
+            # Draw the arrow
+            ax.arrow(start_x, start_y, dx, dy, head_width=0.05, head_length=0.05, fc=color, ec=color, linewidth=2)
 
             # Create a custom legend
             from matplotlib.lines import Line2D
             legend_elements = [
                 Line2D([0], [0], marker='o', color='w', label=ion, markerfacecolor=color, markersize=10),
                 Line2D([0], [0], color=colors['membrane'], lw=2, label='Cell Membrane'),
-                Line2D([0], [0], marker=(3, 0, 0), color=color, label=f'{ion} Flux', markersize=15),
+                Line2D([0], [0], marker=(3,0,0), color=color, label=f'{ion} Flux', markersize=15),
             ]
             ax.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(1.3, 1))
 
             plt.tight_layout()
             plt.show()
-
-            # Display average flux using IPython.display.HTML
-            flux_display = HTML(f"<b>Average {ion} Flux (mol/(m²·s)):</b> {avg_J:.2e}")
-            display(flux_display)
 
     def update_sliders(*args):
         ion = ion_dropdown.value
@@ -598,11 +578,10 @@ def nernst_planck_interactive_plot():
     # Initial plot
     update_sliders()
 
-
 def ghk_interactive_plot():
     # Colors for plotting
     colors = {
-        'K+': '#1f77b4',  # blue
+        'K+': '#1f77b4',   # blue
         'Na+': '#ff7f0e',  # orange
         'Cl-': '#2ca02c',  # green
         'membrane': '#9467bd'  # purple
@@ -612,30 +591,20 @@ def ghk_interactive_plot():
     slider_style = {'description_width': '150px'}
     slider_layout = widgets.Layout(width='400px')
 
-    K_in_slider = widgets.FloatSlider(value=140, min=1, max=400, step=1, description='[K⁺]_in (mM)',
-                                      continuous_update=False, style=slider_style, layout=slider_layout)
-    K_out_slider = widgets.FloatSlider(value=5, min=1, max=400, step=1, description='[K⁺]_out (mM)',
-                                       continuous_update=False, style=slider_style, layout=slider_layout)
-    Na_in_slider = widgets.FloatSlider(value=12, min=1, max=150, step=1, description='[Na⁺]_in (mM)',
-                                       continuous_update=False, style=slider_style, layout=slider_layout)
-    Na_out_slider = widgets.FloatSlider(value=145, min=1, max=150, step=1, description='[Na⁺]_out (mM)',
-                                        continuous_update=False, style=slider_style, layout=slider_layout)
-    Cl_in_slider = widgets.FloatSlider(value=4, min=1, max=150, step=1, description='[Cl⁻]_in (mM)',
-                                       continuous_update=False, style=slider_style, layout=slider_layout)
-    Cl_out_slider = widgets.FloatSlider(value=110, min=1, max=150, step=1, description='[Cl⁻]_out (mM)',
-                                        continuous_update=False, style=slider_style, layout=slider_layout)
+    K_in_slider = widgets.FloatSlider(value=140, min=1, max=400, step=1, description='[K⁺]_in (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
+    K_out_slider = widgets.FloatSlider(value=5, min=1, max=400, step=1, description='[K⁺]_out (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
+    Na_in_slider = widgets.FloatSlider(value=12, min=1, max=150, step=1, description='[Na⁺]_in (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
+    Na_out_slider = widgets.FloatSlider(value=145, min=1, max=150, step=1, description='[Na⁺]_out (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
+    Cl_in_slider = widgets.FloatSlider(value=4, min=1, max=150, step=1, description='[Cl⁻]_in (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
+    Cl_out_slider = widgets.FloatSlider(value=110, min=1, max=150, step=1, description='[Cl⁻]_out (mM)', continuous_update=False, style=slider_style, layout=slider_layout)
 
-    P_K_slider = widgets.FloatSlider(value=1, min=0, max=1, step=0.01, description='P_K', continuous_update=False,
-                                     style=slider_style, layout=slider_layout)
-    P_Na_slider = widgets.FloatSlider(value=0.03, min=0, max=1, step=0.01, description='P_Na', continuous_update=False,
-                                      style=slider_style, layout=slider_layout)
-    P_Cl_slider = widgets.FloatSlider(value=0.1, min=0, max=1, step=0.01, description='P_Cl', continuous_update=False,
-                                      style=slider_style, layout=slider_layout)
+    P_K_slider = widgets.FloatSlider(value=1, min=0, max=1, step=0.01, description='P_K', continuous_update=False, style=slider_style, layout=slider_layout)
+    P_Na_slider = widgets.FloatSlider(value=0.03, min=0, max=1, step=0.01, description='P_Na', continuous_update=False, style=slider_style, layout=slider_layout)
+    P_Cl_slider = widgets.FloatSlider(value=0.1, min=0, max=1, step=0.01, description='P_Cl', continuous_update=False, style=slider_style, layout=slider_layout)
 
-    T_slider = widgets.FloatSlider(value=T_default, min=273, max=373, step=1, description='Temperature (K)',
-                                   continuous_update=False, style=slider_style, layout=slider_layout)
+    T_slider = widgets.FloatSlider(value=T_default, min=273, max=373, step=1, description='Temperature (K)', continuous_update=False, style=slider_style, layout=slider_layout)
 
-    # Output area for the plot and the membrane potentials
+    # Output area for the plot
     output_area = widgets.Output()
 
     def update_plot(*args):
@@ -699,9 +668,9 @@ def ghk_interactive_plot():
                 y_out = r_out * np.sin(theta_out)
                 ax.scatter(x_out, y_out, color=color, s=10, alpha=0.5)
 
-            # Adjust plot
+            # Adjust plot limits to accommodate text
             ax.set_xlim(-1.5, 1.5)
-            ax.set_ylim(-1.5, 1.5)
+            ax.set_ylim(-1.8, 1.5)  # Extended lower limit to make room for text
             ax.set_title("Ion Distribution Across Neuron Membrane")
             ax.set_aspect('equal', 'box')
             ax.axis('off')
@@ -716,36 +685,34 @@ def ghk_interactive_plot():
             ]
             ax.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(1.3, 1))
 
+            # Add membrane potentials inside the plot
+            text_str = (f"Membrane Potential (GHK): {V_m:.2f} mV\n"
+                        f"Nernst Potentials:\n"
+                        f"Eₖ⁺: {E_K:.2f} mV\n"
+                        f"Eₙₐ⁺: {E_Na:.2f} mV\n"
+                        f"E_Cl⁻: {E_Cl:.2f} mV")
+            # Place the text at a suitable location, e.g., at the bottom center
+            ax.text(0, -1.6, text_str, fontsize=12, ha='center', va='top')
+
             plt.tight_layout()
             plt.show()
 
-            # Display membrane potentials in a VBox layout to ensure both are visible
-            voltage_display = widgets.VBox([
-                widgets.HTML(value=f"<b>Membrane Potential (GHK):</b> {V_m:.2f} mV"),
-                widgets.HTML(value=f"<b>Nernst Potentials:</b><br>"
-                                   f"E<sub>K⁺</sub>: {E_K:.2f} mV<br>"
-                                   f"E<sub>Na⁺</sub>: {E_Na:.2f} mV<br>"
-                                   f"E<sub>Cl⁻</sub>: {E_Cl:.2f} mV")
-            ])
-
-            display(voltage_display)
-
     # Link the widgets to the plot
-    K_in_slider.observe(update_plot)
-    K_out_slider.observe(update_plot)
-    Na_in_slider.observe(update_plot)
-    Na_out_slider.observe(update_plot)
-    Cl_in_slider.observe(update_plot)
-    Cl_out_slider.observe(update_plot)
-    P_K_slider.observe(update_plot)
-    P_Na_slider.observe(update_plot)
-    P_Cl_slider.observe(update_plot)
-    T_slider.observe(update_plot)
+    K_in_slider.observe(update_plot, 'value')
+    K_out_slider.observe(update_plot, 'value')
+    Na_in_slider.observe(update_plot, 'value')
+    Na_out_slider.observe(update_plot, 'value')
+    Cl_in_slider.observe(update_plot, 'value')
+    Cl_out_slider.observe(update_plot, 'value')
+    P_K_slider.observe(update_plot, 'value')
+    P_Na_slider.observe(update_plot, 'value')
+    P_Cl_slider.observe(update_plot, 'value')
+    T_slider.observe(update_plot, 'value')
 
     # Organize sliders
     sliders = widgets.VBox(
         [K_in_slider, K_out_slider, Na_in_slider, Na_out_slider, Cl_in_slider, Cl_out_slider,
-         P_K_slider, P_Na_slider, P_Cl_slider, T_slider])
+        P_K_slider, P_Na_slider, P_Cl_slider, T_slider])
     layout = widgets.HBox([sliders, output_area])
 
     display(layout)
