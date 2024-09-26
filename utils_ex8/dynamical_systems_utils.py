@@ -92,6 +92,8 @@ def interactive_eigval_plot(real1, imag1, real2, imag2, b):
     axes[1].set_ylabel('y')
     axes[1].set_title("Dynamics")
 
+    plt.show()
+
     
 
 def simulate_noisy_system(noise_level, system=None):
