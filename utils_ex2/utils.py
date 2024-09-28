@@ -23,7 +23,7 @@ def plot_cable_v(y_axis_lim=80, plot_lambda=False):
         # two_lambda_elc_line_hori_default = (i_e_default * R_l_default / 2) * np.exp(-np.abs(2*lambda_elc_default) / lambda_elc_default)
         # lambda_elc_hori_line = ax.axhline(y=lambda_elc_hori_default, color='r', linestyle='--')
         # two_lambda_elc_hori_line = ax.axhline(y=two_lambda_elc_line_hori_default, color='g', linestyle='--')
-        four_mm_line = ax.axvline(x=4, color='b', linestyle='--', label='4 mm')
+        four_mm_line = ax.axvline(x=4, color='b', linestyle='--', label='V(x=4 mm)')
         four_mm_hori = (i_e_default * R_l_default / 2) * np.exp(-4 / lambda_elc_default)
         four_mm_hori_line = ax.axhline(y=four_mm_hori, color='b', linestyle='--')
 
