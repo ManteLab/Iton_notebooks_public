@@ -15,6 +15,7 @@ def plot_cable_v(y_axis_lim=80, plot_lambda=False):
     v_default = (i_e_default * R_l_default / 2) * np.exp(-np.abs(x) / lambda_elc_default)
     fig, ax = plt.subplots(1, 1, figsize=(800 * px, 400 * px))
     v_line = ax.plot(x, v_default, label='Membrane potential')[0]
+    thr_line = ax.axhline(y=20, color='r', linestyle='--', label='Threshold 20 mV')
 
     if plot_lambda:
         # lambda_elc_line = ax.axvline(x=lambda_elc_default, color='r', linestyle='--', label=r'$\lambda$')
