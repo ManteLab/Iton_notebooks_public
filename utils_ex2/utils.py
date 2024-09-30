@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
+import ipywidgets as widgets
+from ipywidgets import interact, FloatSlider, IntSlider
 
 px = 1 / plt.rcParams['figure.dpi']
 
@@ -224,3 +226,94 @@ def plot_multi_injection(y_axis_lim=80):
     ax.grid()
     ax.legend()
     plt.show()
+
+def iplot_InoF_model():
+    # Parameters
+    simtime = 100  # Total number of timesteps (e.g., 100 ms simulation)
+    dt = 1  # Time step in milliseconds
+
+    # Synaptic input times (fixed)
+    input_times = [
+        [20, 50],  # Synapse 1 fires at t=20ms and t=50ms
+        [30, 60],  # Synapse 2 fires at t=30ms and t=60ms
+        [40, 80]   # Synapse 3 fires at t=40ms and t=80ms
+    ]
+    num_synapses = len(input_times)
+
+    # Function to update the plot
+    def update_plot(weight1=5, weight2=10, weight3=15, delay1=5, delay2=10, delay3=15):
+        # Membrane potential
+        V = np.zeros(simtime)
+
+        # Input raster plot data
+        raster = np.zeros((num_synapses, simtime))
+
+        # Weights and delays for each synapse
+        synaptic_weights = [weight1, weight2, weight3]
+        synaptic_delays = [delay1, delay2, delay3]
+
+        # Simulation loop
+        for t in range(1, simtime):
+            # Carry over membrane potential from previous timestep
+            V[t] = V[t-1]
+
+            # Add contribution of each input with its respective weight and delay
+            for i in range(num_synapses):
+                for spike_time in input_times[i]:
+                    original_time = spike_time
+                    input_time = spike_time + synaptic_delays[i]
+                    if t == input_time:  # Register the input at the specific time (delayed)
+                        V[t] += synaptic_weights[i]
+                        raster[i, t] = 1  # Mark delayed spike in raster plot
+
+        # Plot the results
+        fig, axs = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
+
+        # Plot membrane potential
+        axs[0].plot(np.arange(simtime) * dt, V, color='b')
+        axs[0].set_title("Integrate-and-No-Fire Neuron")
+        axs[0].set_ylabel("Membrane Potential (mV)")
+        axs[0].grid(False)
+
+        # Plot input spikes as raster
+        for i in range(num_synapses):
+            for spike_time in input_times[i]:
+                # Plot original input time in black
+                axs[1].scatter(spike_time, i, marker='|', color='black', s=100, label='Original input time' if i == 0 and spike_time == input_times[i][0] else "")
+                # Plot delayed input at soma in grey
+                delayed_time = spike_time + synaptic_delays[i]
+                axs[1].scatter(delayed_time, i, marker='|', color='silver', s=100, label='Delayed input at soma' if i == 0 and spike_time == input_times[i][0] else "")
+
+        axs[1].set_title("Synaptic Input Raster Plot (Black: Original, Grey: Delayed)")
+        axs[1].set_xlabel("Time (ms)")
+        axs[1].set_xticks(np.arange(0, simtime + 1, 10))
+        axs[1].set_yticks(np.arange(num_synapses))
+        axs[1].set_yticklabels([f'Synapse {i+1}' for i in range(num_synapses)])
+        axs[1].grid(False)
+
+        # Adding legend
+        handles, labels = axs[1].get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        axs[1].legend(by_label.values(), by_label.keys())
+
+        plt.tight_layout()
+        plt.show()
+
+    # Create sliders for synaptic weights and delays
+    style = {'description_width': 'initial'}
+    weight1_slider = FloatSlider(min=0, max=100, step=5, value=5, description='Synaptic  Weight 1:', style=style)
+    weight2_slider = FloatSlider(min=0, max=100, step=5, value=10, description='Synaptic  Weight 2:', style=style)
+    weight3_slider = FloatSlider(min=0, max=100, step=5, value=15, description='Synaptic  Weight 3:', style=style)
+
+    delay1_slider = IntSlider(min=0, max=40, step=1, value=5, description='Synaptic Delay 1 (ms)', style=style)
+    delay2_slider = IntSlider(min=0, max=40, step=1, value=10, description='Synaptic Delay 2 (ms)', style=style)
+    delay3_slider = IntSlider(min=0, max=40, step=1, value=15, description='Synaptic Delay 3 (ms)', style=style)
+
+    # Create the interactive plot with sliders
+    interact(update_plot,
+            weight1=weight1_slider,
+            weight2=weight2_slider,
+            weight3=weight3_slider,
+            delay1=delay1_slider,
+            delay2=delay2_slider,
+            delay3=delay3_slider);
