@@ -207,26 +207,26 @@ def iplot_Integrate_and_Fire_model():
             fig, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
 
             # Plot membrane potential with fixed y-axis limits
-            axs[0].plot(time, V, color='b')
-            axs[0].set_title("Integrate-and-Fire Neuron Model with Adaptive Refractory Period")
-            axs[0].set_ylabel("Membrane Potential (mV)")
-            axs[0].axhline(y=threshold, color='r', linestyle='--', label='Threshold')
-            axs[0].set_ylim(-70, 100)  # Set static y-axis limits
-            axs[0].set_yticks(np.arange(-70, 110, 20))  # Explicitly set y-ticks including -70
-            axs[0].grid(True)
+            axs[1].plot(time, V, color='b')
+            axs[1].set_title("Integrate-and-Fire Neuron Model with Adaptive Refractory Period")
+            axs[1].set_ylabel("Membrane Potential (mV)")
+            axs[1].axhline(y=threshold, color='r', linestyle='--', label='Threshold')
+            axs[1].set_ylim(-70, 100)  # Set static y-axis limits
+            axs[1].set_yticks(np.arange(-70, 110, 20))  # Explicitly set y-ticks including -70
+            axs[1].grid(True)
 
             # Highlight refractory period with shading
             for (start, end) in refractory_regions:
-                axs[0].axvspan(start, end, color='yellow', alpha=0.3, label='Refractory Period' if start == refractory_regions[0][0] else "")
+                axs[1].axvspan(start, end, color='yellow', alpha=0.3, label='Refractory Period' if start == refractory_regions[0][0] else "")
 
-            axs[0].legend()
+            axs[1].legend()
 
             # Plot neuron spikes
-            axs[1].plot(time, spikes, color='k')
-            axs[1].set_title("Neuron Spike Train")
-            axs[1].set_ylabel("Spikes")
-            axs[1].set_ylim(-0.1, 1.1)
-            axs[1].grid(True)
+            axs[0].plot(time, spikes, color='k')
+            axs[0].set_title("Neuron Spike Train")
+            axs[0].set_ylabel("Spikes")
+            axs[0].set_ylim(-0.1, 1.1)
+            axs[0].grid(True)
 
             # Plot input spikes as raster
             # Original spike times in black
@@ -360,26 +360,26 @@ def iplot_Leaky_Integrate_and_Fire_model():
             fig, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
 
             # Plot membrane potential with fixed y-axis limits from -70 to 100
-            axs[0].plot(time, V, color='b')
-            axs[0].set_title("Leaky Integrate-and-Fire Neuron Model")
-            axs[0].set_ylabel("Membrane Potential (mV)")
-            axs[0].axhline(y=threshold, color='r', linestyle='--', label='Threshold')
-            axs[0].set_ylim(-70, 100)  # Set static y-axis limits from -70 to 100 mV
-            axs[0].set_yticks(np.arange(-70, 110, 20))  # Explicitly set y-ticks including -70
-            axs[0].grid(True)
+            axs[1].plot(time, V, color='b')
+            axs[1].set_title("Leaky Integrate-and-Fire Neuron Model")
+            axs[1].set_ylabel("Membrane Potential (mV)")
+            axs[1].axhline(y=threshold, color='r', linestyle='--', label='Threshold')
+            axs[1].set_ylim(-70, 100)  # Set static y-axis limits from -70 to 100 mV
+            axs[1].set_yticks(np.arange(-70, 110, 20))  # Explicitly set y-ticks including -70
+            axs[1].grid(True)
 
             # Highlight refractory period with shading
             for (start, end) in refractory_regions:
-                axs[0].axvspan(start, end, color='yellow', alpha=0.3, label='Refractory Period' if start == refractory_regions[0][0] else "")
+                axs[1].axvspan(start, end, color='yellow', alpha=0.3, label='Refractory Period' if start == refractory_regions[0][0] else "")
 
-            axs[0].legend()
+            axs[1].legend()
 
             # Plot neuron spikes
-            axs[1].plot(time, spikes, color='k')
-            axs[1].set_title("Neuron Spike Train")
-            axs[1].set_ylabel("Spikes")
-            axs[1].set_ylim(-0.1, 1.1)
-            axs[1].grid(True)
+            axs[0].plot(time, spikes, color='k')
+            axs[0].set_title("Neuron Spike Train")
+            axs[0].set_ylabel("Spikes")
+            axs[0].set_ylim(-0.1, 1.1)
+            axs[0].grid(True)
 
             # Plot input spikes as raster
             # Original spike times in black
@@ -451,10 +451,10 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
     # Function to update the plot
     def update_plot( syn_lengths_mean=1, syn_lengths_std=0.5,
                     sync_mean=0.5, sync_std=0.1, rate_mean=10, rate_std=2,
-                    weights_mean=5, weights_std=1, tau=10, threshold=20,
-                    refractory_scale=0.2):
+                    weights_mean=5, weights_std=1, tau=10, threshold=20):
         
         num_synapses=20
+        refractory_scale=0.2
 
         # Adjust standard deviations based on synchronization mean
         syn_lengths_std_adjusted = syn_lengths_std * (1 - sync_mean)
@@ -544,9 +544,9 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
 
             # Use subplot_mosaic to create a mosaic layout
             fig, axs = plt.subplot_mosaic(
-                [["Synaptic Length", "Membrane Potential"],
+                [["Synaptic Length", "Spike Train"],
                  ["Synchronicity", "Membrane Potential"],
-                 ["Input Rate", "Spike Train"],
+                 ["Input Rate", "Membrane Potential"],
                  ["Synaptic Weight", "Input Raster"]],
                 figsize=(14, 10),
                 constrained_layout=True
@@ -629,13 +629,12 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
     weights_mean_slider = FloatSlider(min=0, max=20, step=0.5, value=5, description='Synaptic Weight Mean:', style=style)
     weights_std_slider = FloatSlider(min=0.01, max=5, step=0.01, value=1, description='Synaptic Weight Std:', style=style)
     tau_slider = FloatSlider(min=1, max=100, step=1, value=10, description='Leak Time Constant (ms):', style=style)
-    threshold_slider = FloatSlider(min=1, max=100, step=1, value=20, description='Threshold (mV):', style=style)
-    refractory_scale_slider = FloatSlider(min=0.01, max=1.0, step=0.01, value=0.2, description='Refractory Scale Factor:', style=style)
+    threshold_slider = FloatSlider(min=1, max=100, step=1, value=40, description='Threshold (mV):', style=style)
 
     # Combine sliders into a vertical layout
     slider_box = VBox([syn_lengths_mean_slider, syn_lengths_std_slider,
                        sync_mean_slider, sync_std_slider, rate_mean_slider, rate_std_slider,
-                       weights_mean_slider, weights_std_slider, tau_slider, threshold_slider, refractory_scale_slider])
+                       weights_mean_slider, weights_std_slider, tau_slider, threshold_slider])
 
     # Create the "Update Plot" button
     plot_button = Button(description="Update Plot", button_style='success')
@@ -652,8 +651,7 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
             weights_mean=weights_mean_slider.value,
             weights_std=weights_std_slider.value,
             tau=tau_slider.value,
-            threshold=threshold_slider.value,
-            refractory_scale=refractory_scale_slider.value
+            threshold=threshold_slider.value
         )
 
     # Link button to callback function
@@ -673,6 +671,5 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
             weights_mean=weights_mean_slider.value,
             weights_std=weights_std_slider.value,
             tau=tau_slider.value,
-            threshold=threshold_slider.value,
-            refractory_scale=refractory_scale_slider.value
+            threshold=threshold_slider.value
         )
