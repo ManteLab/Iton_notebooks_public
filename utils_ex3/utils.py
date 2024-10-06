@@ -105,7 +105,7 @@ def iplot_InoF_model():
     style = {'description_width': 'initial'}
     synaptic_weight_slider = FloatSlider(min=1, max=100, step=1, value=5, description='Synaptic Weight (mV):', style=style)
     frequency_slider = FloatSlider(min=1, max=200, step=1, value=10, description='Input Frequency (Hz):', style=style)
-    length_slider = FloatSlider(min=0.1, max=10, step=0.1, value=1, description='Synaptic Length (mm):', style=style)
+    length_slider = FloatSlider(min=0.1, max=10, step=0.1, value=1, description='Distance: Synapse-Soma (mm):', style=style)
 
     # Create the button to trigger the plot update
     plot_button = Button(description="Update Plot", button_style='success')
@@ -258,8 +258,8 @@ def iplot_Integrate_and_Fire_model():
     style = {'description_width': 'initial'}
     synaptic_weight_slider = FloatSlider(min=0, max=100, step=1, value=5, description='Synaptic Weight (mV):', style=style)
     frequency_slider = FloatSlider(min=1, max=1000, step=1, value=10, description='Input Frequency (Hz):', style=style)
-    length_slider = FloatSlider(min=0.1, max=10, step=0.1, value=1, description='Synaptic Length (mm):', style=style)
-    threshold_slider = FloatSlider(min=1, max=100, step=1, value=20, description='Threshold (mV):', style=style)
+    length_slider = FloatSlider(min=0.1, max=10, step=0.1, value=1, description='Distance: Synapse-Soma (mm):', style=style)
+    threshold_slider = FloatSlider(min=-60, max=100, step=1, value=20, description='Threshold (mV):', style=style)
     refractory_scale_slider = FloatSlider(min=0.01, max=1.0, step=0.01, value=0.1, description='Refractory Scale Factor:', style=style)
 
     # Create the button to trigger the plot update
@@ -411,8 +411,8 @@ def iplot_Leaky_Integrate_and_Fire_model():
     style = {'description_width': 'initial'}
     synaptic_weight_slider = FloatSlider(min=0, max=100, step=1, value=5, description='Synaptic Weight (mV):', style=style)
     frequency_slider = FloatSlider(min=1, max=100, step=1, value=10, description='Input Frequency (Hz):', style=style)
-    length_slider = FloatSlider(min=0.1, max=10, step=0.1, value=1, description='Synaptic Length (mm):', style=style)
-    threshold_slider = FloatSlider(min=1, max=100, step=1, value=20, description='Threshold (mV):', style=style)
+    length_slider = FloatSlider(min=0.1, max=10, step=0.1, value=1, description='Distance: Synapse-Soma (mm):', style=style)
+    threshold_slider = FloatSlider(min=-60, max=100, step=1, value=20, description='Threshold (mV):', style=style)
     tau_slider = FloatSlider(min=1, max=100, step=1, value=10, description='Time Constant (ms):', style=style)
     refractory_scale_slider = FloatSlider(min=0.01, max=1.0, step=0.01, value=0.1, description='Refractory Scale:', style=style)
 
@@ -620,8 +620,8 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
     # Create sliders for each parameter
     style = {'description_width': 'initial'}
     # num_synapses_slider = IntSlider(min=1, max=100, step=1, value=20, description='Number of Synapses:', style=style)
-    syn_lengths_mean_slider = FloatSlider(min=0.1, max=5, step=0.1, value=1, description='Synaptic Length Mean:', style=style)
-    syn_lengths_std_slider = FloatSlider(min=0.01, max=2, step=0.01, value=0.5, description='Synaptic Length Std:', style=style)
+    syn_lengths_mean_slider = FloatSlider(min=0.1, max=5, step=0.1, value=1, description='Distance: Synapse-Soma (mm) Mean:', style=style)
+    syn_lengths_std_slider = FloatSlider(min=0.01, max=2, step=0.01, value=0.5, description='Distance: Synapse-Soma (mm) Std:', style=style)
     sync_mean_slider = FloatSlider(min=0, max=1, step=0.05, value=0.5, description='Synchronization Mean:', style=style)
     sync_std_slider = FloatSlider(min=0.01, max=0.5, step=0.01, value=0.1, description='Synchronization Std:', style=style)
     rate_mean_slider = FloatSlider(min=1, max=50, step=1, value=10, description='Input Rate Mean:', style=style)
@@ -629,7 +629,7 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
     weights_mean_slider = FloatSlider(min=0, max=20, step=0.5, value=5, description='Synaptic Weight Mean:', style=style)
     weights_std_slider = FloatSlider(min=0.01, max=5, step=0.01, value=1, description='Synaptic Weight Std:', style=style)
     tau_slider = FloatSlider(min=1, max=100, step=1, value=10, description='Leak Time Constant (ms):', style=style)
-    threshold_slider = FloatSlider(min=1, max=100, step=1, value=40, description='Threshold (mV):', style=style)
+    threshold_slider = FloatSlider(min=-60, max=100, step=1, value=40, description='Threshold (mV):', style=style)
 
     # Combine sliders into a vertical layout
     slider_box = VBox([syn_lengths_mean_slider, syn_lengths_std_slider,
