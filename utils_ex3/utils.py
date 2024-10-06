@@ -156,8 +156,7 @@ def iplot_Integrate_and_Fire_model():
         input_times = generate_input_times(frequency)
 
         # Compute synaptic delay based on length
-        # Assume propagation velocity v = 0.1 mm/ms (100 mm/s)
-        v = 0.1  # Propagation velocity in mm/ms
+        v = 0.1  # Propagation velocity in mm/ms (100 mm/s)
         delay = length / v  # Delay in milliseconds
         delay = int(round(delay))  # Convert to integer milliseconds
 
@@ -189,15 +188,12 @@ def iplot_Integrate_and_Fire_model():
                 V_peak = V[t_idx]
 
                 # Adaptive refractory period: longer period for higher V_peak
-                refractory_time_remaining = refractory_scale * V_peak
+                refractory_time_remaining = max(refractory_scale * abs(V_peak), 1)  # Ensure non-zero refractory period
                 refractory_regions.append((t, t + refractory_time_remaining))  # Store start and end of refractory period
 
-                # Reset after spike (but after overshooting the threshold)
-                V[t_idx] = V_peak  # Show overshoot at the threshold crossing
-
-                # In the next time step, the potential will be reset to resting value (-70 mV)
+                # Don't reset immediately, reset at the next time step
                 if t_idx + 1 < len(time):
-                    V[t_idx + 1] = -70
+                    V[t_idx + 1] = -70  # Reset to resting potential in the next time step
 
         # Clear the previous plot output
         with output_plot:
@@ -229,7 +225,6 @@ def iplot_Integrate_and_Fire_model():
             axs[0].grid(True)
 
             # Plot input spikes as raster
-            # Original spike times in black
             for spike_time in input_times:
                 axs[2].scatter(spike_time, 0, marker='|', color='black', s=100, label='Original input time' if spike_time == input_times[0] else "")
             # Delayed input times in grey
@@ -297,9 +292,12 @@ def iplot_Leaky_Integrate_and_Fire_model():
     output_plot = Output()
 
     # Function to update the plot
-    def update_plot(frequency=10, synaptic_weight=5, length=1, threshold=20, tau=10, refractory_scale=0.1):
+    def update_plot(frequency=10, synaptic_weight=5, length=1, threshold=20, tau=10):
         # Membrane potential, starting from -70 mV
         V = np.full(len(time), -70.0)
+        refractory_scale=0.1
+        # Resting potential
+        resting_potential = -70.0
 
         # Spike train of the neuron
         spikes = np.zeros(len(time))
@@ -324,17 +322,16 @@ def iplot_Leaky_Integrate_and_Fire_model():
             # Check if neuron is in refractory period
             if refractory_time_remaining > 0:
                 refractory_time_remaining -= dt
-                V[t_idx] = -70  # Membrane potential remains at resting value
+                V[t_idx] = resting_potential  # Membrane potential remains at resting value
                 continue  # Skip to next time step
 
             # Apply leaky decay to membrane potential
-            V[t_idx] = V[t_idx - 1] - (V[t_idx - 1] / tau)
+            V[t_idx] = V[t_idx - 1] + ((resting_potential - V[t_idx - 1]) / tau)
 
             # Add contribution of input with its weight and delay when the delayed spike reaches the soma
             for spike_time in input_times:
                 input_time = spike_time + delay
                 if t == input_time:
-                    # The delayed spike reaches the soma, membrane potential starts increasing
                     V[t_idx] += synaptic_weight  # Add the full synaptic weight when spike reaches soma
 
             # Check for firing
@@ -345,12 +342,12 @@ def iplot_Leaky_Integrate_and_Fire_model():
                 V_peak = V[t_idx]
 
                 # Set refractory period as a function of membrane potential (scaling factor)
-                refractory_time_remaining = refractory_scale * V_peak
+                refractory_time_remaining = max(refractory_scale * abs(V_peak), 1)  # Ensure a non-zero refractory period
                 refractory_regions.append((t, t + refractory_time_remaining))  # Store start and end of refractory period
 
                 # In the next time step, the potential will be reset to -70 mV (resting potential)
                 if t_idx + 1 < len(time):
-                    V[t_idx + 1] = -70
+                    V[t_idx + 1] = resting_potential
 
         # Clear the previous plot output
         with output_plot:
@@ -382,7 +379,6 @@ def iplot_Leaky_Integrate_and_Fire_model():
             axs[0].grid(True)
 
             # Plot input spikes as raster
-            # Original spike times in black
             for spike_time in input_times:
                 axs[2].scatter(spike_time, 0, marker='|', color='black', s=100, label='Original input time' if spike_time == input_times[0] else "")
             # Delayed input times in grey
@@ -414,24 +410,24 @@ def iplot_Leaky_Integrate_and_Fire_model():
     length_slider = FloatSlider(min=0.1, max=10, step=0.1, value=1, description='Distance: Synapse-Soma (mm):', style=style)
     threshold_slider = FloatSlider(min=-60, max=100, step=1, value=20, description='Threshold (mV):', style=style)
     tau_slider = FloatSlider(min=1, max=100, step=1, value=10, description='Time Constant (ms):', style=style)
-    refractory_scale_slider = FloatSlider(min=0.01, max=1.0, step=0.01, value=0.1, description='Refractory Scale:', style=style)
 
     # Create the button to trigger the plot update
     plot_button = Button(description="Update Plot", button_style='success')
 
     # Callback function to update plot when the button is clicked
     def on_button_click(b):
-        update_plot(frequency=frequency_slider.value, synaptic_weight=synaptic_weight_slider.value, length=length_slider.value, threshold=threshold_slider.value, tau=tau_slider.value, refractory_scale=refractory_scale_slider.value)
+        update_plot(frequency=frequency_slider.value, synaptic_weight=synaptic_weight_slider.value, length=length_slider.value, threshold=threshold_slider.value, tau=tau_slider.value)
 
     # Link button to callback function
     plot_button.on_click(on_button_click)
 
     # Create a vertical box to hold sliders, the button, and the output plot
-    ui = VBox([frequency_slider, synaptic_weight_slider, length_slider, threshold_slider, tau_slider, refractory_scale_slider, plot_button, output_plot])
+    ui = VBox([frequency_slider, synaptic_weight_slider, length_slider, threshold_slider, tau_slider, plot_button, output_plot])
 
     display(ui)
 
-    update_plot(frequency=frequency_slider.value, synaptic_weight=synaptic_weight_slider.value, length=length_slider.value, threshold=threshold_slider.value, tau=tau_slider.value, refractory_scale=refractory_scale_slider.value)
+    update_plot(frequency=frequency_slider.value, synaptic_weight=synaptic_weight_slider.value, length=length_slider.value, threshold=threshold_slider.value, tau=tau_slider.value)
+
 
 def iplot_Leaky_Integrate_and_Fire_with_distributions():
     # Simulation parameters
@@ -449,12 +445,12 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
     output_plot = Output()
 
     # Function to update the plot
-    def update_plot( syn_lengths_mean=1, syn_lengths_std=0.5,
+    def update_plot(syn_lengths_mean=1, syn_lengths_std=0.5,
                     sync_mean=0.5, sync_std=0.1, rate_mean=10, rate_std=2,
                     weights_mean=5, weights_std=1, tau=10, threshold=20):
         
-        num_synapses=20
-        refractory_scale=0.2
+        num_synapses = 20
+        refractory_scale = 0.2
 
         # Adjust standard deviations based on synchronization mean
         syn_lengths_std_adjusted = syn_lengths_std * (1 - sync_mean)
@@ -507,6 +503,7 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
 
         # Membrane potential and spike train
         V = np.full(len(time), -70.0)  # Initialize with resting potential of -70 mV
+        resting_potential = -70.0
         spikes = np.zeros(len(time))
         refractory_counter = 0  # Use an integer counter for the refractory period
         refractory_regions = []
@@ -516,27 +513,28 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
             if refractory_counter > 0:
                 # Neuron is in refractory period
                 refractory_counter -= 1  # Decrease refractory time remaining
-                V[t_idx] = -70  # Keep membrane potential at reset value
+                V[t_idx] = resting_potential  # Keep membrane potential at reset value
                 continue  # Skip the rest of the loop
             else:
                 # Apply leaky decay to membrane potential
-                V[t_idx] = V[t_idx - 1] - (V[t_idx - 1] / tau)
+                V[t_idx] = V[t_idx - 1] + ((resting_potential - V[t_idx - 1]) / tau)
                 
                 # Add synaptic current at this time step
                 V[t_idx] += synaptic_current[t_idx]
 
-                # Check for firing
+                # Check for firing (only reset after visualization)
                 if V[t_idx] >= threshold:
                     spikes[t_idx] = 1
                     V_peak = V[t_idx]  # Record peak membrane potential
-                    V[t_idx] = V_peak  # Keep the peak value for plotting
                     
                     # Calculate adaptive refractory period as a function of peak potential
-                    refractory_period_duration = refractory_scale * V_peak
+                    refractory_period_duration = refractory_scale * abs(V_peak)
                     refractory_counter = int(refractory_period_duration / dt)  # Start refractory period
                     refractory_regions.append((time[t_idx], time[t_idx] + refractory_period_duration))
+                    
+                    # Reset membrane potential after spike, but only in the next time step
                     if t_idx + 1 < len(time):
-                        V[t_idx + 1] = -70  # Reset membrane potential in next time step
+                        V[t_idx + 1] = resting_potential
 
         # Clear the previous plot output before drawing the new plot
         with output_plot:
@@ -619,7 +617,6 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
 
     # Create sliders for each parameter
     style = {'description_width': 'initial'}
-    # num_synapses_slider = IntSlider(min=1, max=100, step=1, value=20, description='Number of Synapses:', style=style)
     syn_lengths_mean_slider = FloatSlider(min=0.1, max=5, step=0.1, value=1, description='Distance: Synapse-Soma (mm) Mean:', style=style)
     syn_lengths_std_slider = FloatSlider(min=0.01, max=2, step=0.01, value=0.5, description='Distance: Synapse-Soma (mm) Std:', style=style)
     sync_mean_slider = FloatSlider(min=0, max=1, step=0.05, value=0.5, description='Synchronization Mean:', style=style)
@@ -662,14 +659,14 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
     display(ui)
 
     update_plot(
-            syn_lengths_mean=syn_lengths_mean_slider.value,
-            syn_lengths_std=syn_lengths_std_slider.value,
-            sync_mean=sync_mean_slider.value,
-            sync_std=sync_std_slider.value,
-            rate_mean=rate_mean_slider.value,
-            rate_std=rate_std_slider.value,
-            weights_mean=weights_mean_slider.value,
-            weights_std=weights_std_slider.value,
-            tau=tau_slider.value,
-            threshold=threshold_slider.value
-        )
+        syn_lengths_mean=syn_lengths_mean_slider.value,
+        syn_lengths_std=syn_lengths_std_slider.value,
+        sync_mean=sync_mean_slider.value,
+        sync_std=sync_std_slider.value,
+        rate_mean=rate_mean_slider.value,
+        rate_std=rate_std_slider.value,
+        weights_mean=weights_mean_slider.value,
+        weights_std=weights_std_slider.value,
+        tau=tau_slider.value,
+        threshold=threshold_slider.value
+    )
