@@ -617,8 +617,8 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
 
     # Create sliders for each parameter
     style = {'description_width': 'initial'}
-    syn_lengths_mean_slider = FloatSlider(min=0.1, max=5, step=0.1, value=1, description='Distance: Synapse-Soma (mm) Mean:', style=style)
-    syn_lengths_std_slider = FloatSlider(min=0.01, max=2, step=0.01, value=0.5, description='Distance: Synapse-Soma (mm) Std:', style=style)
+    syn_lengths_mean_slider = FloatSlider(min=0.1, max=5, step=0.1, value=1, description='Mean Dist:Synapse-Soma(mm)', style=style)
+    syn_lengths_std_slider = FloatSlider(min=0.01, max=2, step=0.01, value=0.5, description='Std Dist:Synapse-Soma(mm):', style=style)
     sync_mean_slider = FloatSlider(min=0, max=1, step=0.05, value=0.5, description='Synchronization Mean:', style=style)
     sync_std_slider = FloatSlider(min=0.01, max=0.5, step=0.01, value=0.1, description='Synchronization Std:', style=style)
     rate_mean_slider = FloatSlider(min=1, max=50, step=1, value=10, description='Input Rate Mean:', style=style)
