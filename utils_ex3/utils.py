@@ -177,16 +177,17 @@ def iplot_Integrate_and_Fire_model():
             if refractory_time_remaining > 0:
                 refractory_time_remaining -= dt
                 if just_fired:
-                  V[t_idx] = -70  # Membrane potential reset to resting value
-                  just_fired = False
+                    V[t_idx] = -70  # Membrane potential reset to resting value
+                    just_fired = False
                 else:
-                  # Add contribution of input with its weight and delay when the delayed spike reaches the soma
-                  add_input_contrib()
+                    # Carry over membrane potential from previous timestep
+                    V[t_idx] = V[t_idx - 1]
+                    # Add contribution of input with its weight and delay when the delayed spike reaches the soma
+                    add_input_contrib()
                 continue  # Skip to next time step
 
             # Carry over membrane potential from previous timestep
             V[t_idx] = V[t_idx - 1]
-
             # Add contribution of input with its weight and delay
             add_input_contrib()
 
@@ -658,8 +659,8 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
     syn_lengths_std_slider = FloatSlider(min=0.01, max=2, step=0.01, value=0.5, description='Std Dist:Synapse-Soma(mm):', style=style)
     sync_mean_slider = FloatSlider(min=0, max=1, step=0.05, value=0.5, description='Synchronization Mean:', style=style)
     sync_std_slider = FloatSlider(min=0.01, max=0.5, step=0.01, value=0.1, description='Synchronization Std:', style=style)
-    rate_mean_slider = FloatSlider(min=1, max=50, step=1, value=10, description='Input Rate Mean:', style=style)
-    rate_std_slider = FloatSlider(min=0.01, max=10, step=0.01, value=2, description='Input Rate Std:', style=style)
+    rate_mean_slider = FloatSlider(min=1, max=100, step=1, value=10, description='Input Rate Mean:', style=style)
+    rate_std_slider = FloatSlider(min=0.01, max=20, step=0.01, value=2, description='Input Rate Std:', style=style)
     weights_mean_slider = FloatSlider(min=0, max=20, step=0.5, value=5, description='Synaptic Weight Mean:', style=style)
     weights_std_slider = FloatSlider(min=0.01, max=5, step=0.01, value=1, description='Synaptic Weight Std:', style=style)
     tau_slider = FloatSlider(min=1, max=100, step=1, value=10, description='Leak Time Constant (ms):', style=style)
