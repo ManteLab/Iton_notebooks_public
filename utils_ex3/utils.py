@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ipywidgets import FloatSlider, Button, VBox, Output, Layout
 import ipywidgets as widgets
+from IPython.display import display
 
 def iplot_InoF_model():
     # Simulation parameters
@@ -609,7 +610,7 @@ def iplot_Leaky_Integrate_and_Fire_with_distributions():
             # Plot Synaptic Weight Distribution
             axs["Synaptic Weight"].hist(synaptic_weights, bins=10, color='purple', alpha=0.7)
             axs["Synaptic Weight"].set_title("Synaptic Weight Distribution")
-            axs["Synaptic Weight"].set_xlabel("Weight (mV)")
+            axs["Synaptic Weight"].set_xlabel("Synaptic Weight")
             axs["Synaptic Weight"].set_ylabel("Count")
 
             # Plot Membrane Potential
