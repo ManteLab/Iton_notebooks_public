@@ -426,7 +426,6 @@ def iplot_Leaky_Integrate_and_Fire_model():
             by_label = dict(zip(labels, handles))
             axs[2].legend(by_label.values(), by_label.keys())
 
-            plt.tight_layout()
             plt.show()
 
     # Create sliders for synaptic weight, frequency, length, threshold, tau (time constant), and refractory scale
