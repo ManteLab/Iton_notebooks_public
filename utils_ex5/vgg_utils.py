@@ -358,7 +358,7 @@ class RaoBallard1999Model:
 
 
 def load_rao_ballard():
-    with open('vgg_data/rao_ballard_trained.pkl', 'rb') as f:
+    with open('rao_ballard_trained.pkl', 'rb') as f:
         obj = pickle.load(f)
 
     model = obj
