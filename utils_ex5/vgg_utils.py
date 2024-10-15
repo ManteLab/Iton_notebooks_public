@@ -51,6 +51,32 @@ def create_radius_gratings(frequency, radii, contrast, orientation, size=256, ce
     #outs = torch.stack(network_outputs)
     return torch.stack(gratings)
 
+def apply_circle(gratings, radius, size, center):
+
+    if radius is not None:
+
+        # Default center location is the middle of the image
+        if center is None:
+            center = (size // 2, size // 2)
+
+        # Get x and y coordinates, centered on the location
+        x = np.arange(size) - center[0]
+        y = np.arange(size) - center[1]
+        x, y = np.meshgrid(x, y)
+        
+        # Distance from the center
+        distance_from_center = np.sqrt(x**2 + y**2)
+        
+        # Create a Gaussian mask for smooth falloff
+        #mask = np.exp(-((distance_from_center**2) / (2 * (radius**2))))
+        mask = np.where(distance_from_center <= radius, 1, 0)
+
+        # Apply the mask to the grating
+        gratings *= mask
+        gratings = gratings + 0.5
+
+    return gratings.float()
+
 def create_superimposed_gratings(frequency, radius, contrast_pref, contrasts_orth, pref_orientation, orth_orientation, size=256, center=(125, 125)):
     if len(contrast_pref) > 1:
         raise ValueError(f"Error: length of contrast_pref should be 1, but got {len(contrast_pref)}.")
@@ -62,7 +88,7 @@ def create_superimposed_gratings(frequency, radius, contrast_pref, contrasts_ort
     grating_pref = [create_grating(frequency, pref_orientation, 0, size, c, (center_x, center_y), radius) for c in contrast_pref]
     #create_contrast_gratings(frequency, radius, contrast_pref, pref_orientation)
 
-    gratings_superimposed = [grating_pref[0] + grating_orth for grating_orth in gratings_orth] #
+    gratings_superimposed = [apply_circle(grating_pref[0] + grating_orth, radius, size, center) for grating_orth in gratings_orth]     
 
     return torch.stack(gratings_superimposed)
 
@@ -92,9 +118,11 @@ def create_grating(sf, ori, phase, imsize, contrast=1.0, location=None, radius=N
 
     # Plug gradient into the chosen wave function
     grating = np.sin((2 * math.pi * gradient) / sf + (phase * math.pi) / 180)
- 
+
     # Apply contrast by scaling the grating
+    #print(np.max(grating, axis = 1))
     grating *= contrast
+    #print(np.max(grating, axis = 1))
 
     # If radius is specified, create a smooth circular mask
     if radius is not None:
@@ -105,11 +133,10 @@ def create_grating(sf, ori, phase, imsize, contrast=1.0, location=None, radius=N
         #mask = np.exp(-((distance_from_center**2) / (2 * (radius**2))))
         mask = np.where(distance_from_center <= radius, 1, 0)
 
-
         # Apply the mask to the grating
         grating *= mask
+        grating = grating + 0.5
 
-    
     return torch.tensor(grating).unsqueeze(0).repeat(3, 1, 1).float()
 
 def create_bar_lengths(size, contrast, location, lengths, width):
