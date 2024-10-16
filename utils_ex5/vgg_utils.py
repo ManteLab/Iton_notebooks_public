@@ -21,10 +21,9 @@ def interactive_grating(frequency, radius, contrast, orientation):
     size = (256, 256)
     center_x = 125
     center_y = 125 
-
-
     grating = create_grating(frequency, orientation, 0, 128, contrast, location=None, radius=radius)
-    plot_image(grating.clip(0, 1))
+    #plot_image(grating.clip(0, 1))
+    plot_image(grating)
 
 def create_orientation_gratings(frequency, radius, contrast, orientations, size=256, center=(125, 125)):
     # Set parameters
@@ -88,9 +87,10 @@ def create_superimposed_gratings(frequency, radius, contrast_pref, contrasts_ort
     grating_pref = [create_grating(frequency, pref_orientation, 0, size, c, (center_x, center_y), radius) for c in contrast_pref]
     #create_contrast_gratings(frequency, radius, contrast_pref, pref_orientation)
 
-    gratings_superimposed = [apply_circle(grating_pref[0] + grating_orth, radius, size, center) for grating_orth in gratings_orth]     
+    gratings_superimposed = [grating_pref[0] + grating_orth for grating_orth in gratings_orth]     
 
     return torch.stack(gratings_superimposed)
+
 
 def create_grating(sf, ori, phase, imsize, contrast=1.0, location=None, radius=None):
     """
@@ -119,10 +119,8 @@ def create_grating(sf, ori, phase, imsize, contrast=1.0, location=None, radius=N
     # Plug gradient into the chosen wave function
     grating = np.sin((2 * math.pi * gradient) / sf + (phase * math.pi) / 180)
 
-    # Apply contrast by scaling the grating
-    #print(np.max(grating, axis = 1))
+    grating = grating / 2 # [-0.5, 0.5] - max
     grating *= contrast
-    #print(np.max(grating, axis = 1))
 
     # If radius is specified, create a smooth circular mask
     if radius is not None:
@@ -135,9 +133,9 @@ def create_grating(sf, ori, phase, imsize, contrast=1.0, location=None, radius=N
 
         # Apply the mask to the grating
         grating *= mask
-        grating = grating + 0.5
 
     return torch.tensor(grating).unsqueeze(0).repeat(3, 1, 1).float()
+
 
 def create_bar_lengths(size, contrast, location, lengths, width):
     # Set parameters
@@ -261,7 +259,7 @@ def plot_alexnet_rfs(convolutional_neural_net):
         fig.suptitle(f'25 Random Filters of Convolutional Layer {idx + 1}', fontsize=16)
         plt.show()
 
-def plot_image_row(imgs, titles=None):
+def plot_image_row(imgs, isgrating = False, titles=None):
     n_images = len(imgs)
     # Plot the grid of images (8x8 grid for 64 images)
     fig, axes = plt.subplots(nrows=1, ncols=n_images, figsize=(16, 8))  # 8x8 grid
@@ -275,7 +273,8 @@ def plot_image_row(imgs, titles=None):
         # image = images[i] * std + mean
 
         ax.set_title(titles[i])
-        ax.imshow(imgs[i].permute(1, 2, 0).clip(0, 1))  # Display image
+        this_img = 0.5 + imgs[i].permute(1, 2, 0)
+        ax.imshow(this_img.clip(0, 1))  # Display image
         ax.axis('off')  # Turn off axis for cleaner visualization
 
     plt.tight_layout()
@@ -284,7 +283,8 @@ def plot_image_row(imgs, titles=None):
 def plot_image(img, title=''):
 
     plt.title(title)
-    plt.imshow(img.permute(1, 2, 0), extent=[-1, 1, -1, 1])
+    this_img = 0.5 + img.permute(1, 2, 0)
+    plt.imshow(this_img.clip(0,1), extent=[-1, 1, -1, 1])
     plt.axis('off')  # Hide axis
     plt.show()
 
