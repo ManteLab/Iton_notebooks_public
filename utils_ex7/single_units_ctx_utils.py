@@ -441,6 +441,17 @@ def plot_projections_2d_pca(model, context):
     for icol in range(2): #gives the input (relevant / irrelevant)
         fig, axes = plt.subplots(3, 3, figsize=(8, 8))
 
+        if irow == 0:
+            if icol == 0:
+                axes[0,0].text(-0.3, 1.1, 'Motion Context\nMotion Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+            else:
+                axes[0,0].text(-0.3, 1.1, 'Motion Context\nColor Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+        else:
+            if icol == 0:
+                axes[0,0].text(-0.3, 1.1, 'Color Context\nMotion Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+            else:
+                axes[0,0].text(-0.3, 1.1, 'Color Context\nColor Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+
         for ipca1 in range(4):
             for ipca2 in range(4):
                 if ipca1 > ipca2:

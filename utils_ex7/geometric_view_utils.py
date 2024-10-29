@@ -34,7 +34,7 @@ def iplot_data_2classes():
 
         # Set fixed rightmost points for each class
         fixed_point1 = np.array([4, 2])
-        fixed_point2 = np.array([4, 2]) # [-4, -2]
+        fixed_point2 = np.array([4, 2]) 
 
         # Calculate distances from the fixed points
         dist1 = np.linalg.norm(data1 - fixed_point1, axis=1)
@@ -79,8 +79,8 @@ def iplot_data_2classes():
             pca.fit(data)
             pcs = pca.components_
 
-            norm2 = np.linalg.norm(pcs[0, :], ord=2)
-            pcs1_normalized_l2 = pcs[0, :] / norm2
+            pcs1_normalized_l2 = pcs[0, :] / np.linalg.norm(pcs[0, :], ord=2)
+            pcs2_normalized_l2 = pcs[1, :] / np.linalg.norm(pcs[1, :], ord=2)
 
             # Part 2: Run linear regression on the stacked data
             reg = LinearRegression().fit(data, labels)
@@ -101,7 +101,8 @@ def iplot_data_2classes():
             # Plot the basis vectors in the first subplot
             axs[0].plot([0, betas_choice_normalized_l2[0]], [0, betas_choice_normalized_l2[1]], color='black', linewidth=3, label='TDR-choice')   
             axs[0].plot([0, betas_input_normalized_l2[0]], [0, betas_input_normalized_l2[1]], color='red', linewidth=3, label='TDR-input strength')
-            axs[0].plot([0, pcs1_normalized_l2[0]], [0, pcs1_normalized_l2[1]], color='green', linewidth=3, label='PCA')
+            axs[0].plot([0, pcs1_normalized_l2[0]], [0, pcs1_normalized_l2[1]], color='green', linewidth=3, label='PCA 1')
+            axs[0].plot([0, pcs2_normalized_l2[0]], [0, pcs2_normalized_l2[1]], color='lightgreen', linewidth=3, label='PCA 2')
             
             axs[0].set_title(f'Data with Correlation Coefficient: {corr_coeff:.2f}')
             axs[0].set_xlabel('X1')
@@ -120,7 +121,7 @@ def iplot_data_2classes():
             # Plot histogram of projections along PCA axis for each class in the second subplot
             axs[1].hist(proj_pca1, bins=30, color='blue', alpha=0.5, label='Choice 1')
             axs[1].hist(proj_pca2, bins=30, color='red', alpha=0.5, label='Choice 2')
-            axs[1].set_title('Projections onto PCA axis')
+            axs[1].set_title('Projections onto PC1 axis')
             axs[1].set_xlabel('Projection value')
             axs[1].set_ylabel('Counts')
             axs[1].legend()
@@ -137,12 +138,12 @@ def iplot_data_2classes():
             proj_input_tdr2 = np.dot(data2, betas_input_normalized_l2)
 
             # Plot scatter of projections against normalized distance       
-            axs[3].scatter(dist2_normalized, proj_input_tdr2, color='blue', alpha=0.5, label = 'Input 1')
-            axs[3].scatter(dist1_normalized, proj_input_tdr1, color='red', alpha=0.5, label = 'Input 2')
-            axs[3].set_title('Projections onto TDR-choice axis')
+            axs[3].scatter(dist2_normalized, proj_input_tdr2, color=colors1, alpha=0.5, label = 'Input 1')
+            axs[3].scatter(dist1_normalized, proj_input_tdr1, color=colors2, alpha=0.5, label = 'Input 2')
+            axs[3].set_title('Projections onto TDR-input axis')
             axs[3].set_xlabel('Input strength')
             axs[3].set_ylabel('Projection')
-            axs[2].legend()
+            axs[3].legend()
 
             plt.tight_layout()
             plt.show()
@@ -171,15 +172,9 @@ def iplot_data_2classes():
     update_plot(corr_coeff=corr_coeff_slider.value, ortho_order=ortho_order_dropdown.value, orthogonalize=orthogonalize_checkbox.value)
 
 
-
-
-
 def iplot_data():
     interact(visualize_correlated_data_first, 
          corr_coeff=widgets.FloatSlider(min=-1, max=1, step=0.1, value=0, description='Corr Coeff',continuous_update=False))
-
-
-
 
 # Define your function to visualize correlated data with gradient colors based on distance from fixed points
 def visualize_correlated_data_first(corr_coeff=0):
