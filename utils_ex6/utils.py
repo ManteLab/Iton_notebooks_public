@@ -406,7 +406,7 @@ def plot_single_neuron(mat_data):
         draw_figure(fig)
 
     sliders = {
-        'neuron_idx': IntSlider(min=0, max=binned_spike_matrix.shape[2], description='neuron #', layout=Layout(width='800px'), continuous_update=continuous_update)
+        'neuron_idx': IntSlider(min=0, max=binned_spike_matrix.shape[2] - 1, description='neuron #', layout=Layout(width='800px'), continuous_update=continuous_update)
     }
 
     interact(update_plot, **sliders)
@@ -460,7 +460,7 @@ def plot_neuron_by_choice(mat_data):
         draw_figure(fig)
 
     sliders = {
-        'neuron_idx': IntSlider(min=0, max=binned_spike_matrix.shape[2], description='neuron #', layout=Layout(width='800px'), continuous_update=continuous_update)
+        'neuron_idx': IntSlider(min=0, max=binned_spike_matrix.shape[2] - 1, description='neuron #', layout=Layout(width='800px'), continuous_update=continuous_update)
     }
 
     interact(update_plot, **sliders)
@@ -517,7 +517,7 @@ def plot_neuron_by_coherence(mat_data):
         draw_figure(fig)
 
     sliders = {
-        'neuron_idx': IntSlider(min=0, max=binned_spike_matrix.shape[2], description='neuron #', layout=Layout(width='800px'), continuous_update=continuous_update)
+        'neuron_idx': IntSlider(min=0, max=binned_spike_matrix.shape[2] - 1, description='neuron #', layout=Layout(width='800px'), continuous_update=continuous_update)
     }
 
     interact(update_plot, **sliders)
