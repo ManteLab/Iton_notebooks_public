@@ -34,18 +34,24 @@ def iplot_data_2classes():
 
         # Set fixed rightmost points for each class
         fixed_point1 = np.array([4, 2])
-        fixed_point2 = np.array([-4, -2])
+        fixed_point2 = np.array([4, 2]) # [-4, -2]
 
         # Calculate distances from the fixed points
         dist1 = np.linalg.norm(data1 - fixed_point1, axis=1)
         dist2 = np.linalg.norm(data2 - fixed_point2, axis=1)
 
+        data = np.vstack((data1, data2))
+        
+
         # Normalize distances to range [0, 1] for color mapping
         dist1_normalized = (dist1 - dist1.min()) / (dist1.max() - dist1.min())
         dist2_normalized = (dist2 - dist2.min()) / (dist2.max() - dist2.min())
 
+        dist_normalized = np.hstack((dist1_normalized, dist2_normalized))
+
         # Linear regression to normalize beta
-        reg = LinearRegression().fit(data1, dist1_normalized)
+        #reg = LinearRegression().fit(data1, dist1_normalized)
+        reg = LinearRegression().fit(data, dist_normalized)
         betas = reg.coef_
         betas_input_normalized_l2 = betas / np.linalg.norm(betas, ord=2)
 
@@ -65,7 +71,7 @@ def iplot_data_2classes():
             axs[0].scatter(data2[:, 0], data2[:, 1], alpha=0.5, color=colors2, label='Choice 2')
             
             # Stack data and labels for further analysis
-            data = np.vstack((data1, data2))
+            
             labels = np.hstack((np.ones(data1.shape[0]), np.full(data2.shape[0], 2)))
 
             # Part 1: Run PCA on the stacked data
@@ -94,7 +100,7 @@ def iplot_data_2classes():
 
             # Plot the basis vectors in the first subplot
             axs[0].plot([0, betas_choice_normalized_l2[0]], [0, betas_choice_normalized_l2[1]], color='black', linewidth=3, label='TDR-choice')   
-            axs[0].plot([0, betas_input_normalized_l2[0]], [0, betas_input_normalized_l2[1]], color='red', linewidth=3, label='TDR-input 2 strength')
+            axs[0].plot([0, betas_input_normalized_l2[0]], [0, betas_input_normalized_l2[1]], color='red', linewidth=3, label='TDR-input strength')
             axs[0].plot([0, pcs1_normalized_l2[0]], [0, pcs1_normalized_l2[1]], color='green', linewidth=3, label='PCA')
             
             axs[0].set_title(f'Data with Correlation Coefficient: {corr_coeff:.2f}')
@@ -128,12 +134,15 @@ def iplot_data_2classes():
             axs[2].legend()
 
             proj_input_tdr1 = np.dot(data1, betas_input_normalized_l2)
+            proj_input_tdr2 = np.dot(data2, betas_input_normalized_l2)
 
-            # Plot scatter of projections against normalized distance
-            axs[3].scatter(dist1_normalized, proj_input_tdr1, color='red', alpha=0.5)
+            # Plot scatter of projections against normalized distance       
+            axs[3].scatter(dist2_normalized, proj_input_tdr2, color='blue', alpha=0.5, label = 'Input 1')
+            axs[3].scatter(dist1_normalized, proj_input_tdr1, color='red', alpha=0.5, label = 'Input 2')
             axs[3].set_title('Projections onto TDR-choice axis')
-            axs[3].set_xlabel('Input 2 strength')
+            axs[3].set_xlabel('Input strength')
             axs[3].set_ylabel('Projection')
+            axs[2].legend()
 
             plt.tight_layout()
             plt.show()
@@ -181,33 +190,13 @@ def visualize_correlated_data_first(corr_coeff=0):
     data1 = np.random.multivariate_normal([.5, .5], cov_matrix, size=500)
     data2 = np.random.multivariate_normal([-.5, -.5], cov_matrix, size=500)
 
-    # Set fixed rightmost points for each class
-    fixed_point1 = np.array([4, 2])
-    fixed_point2 = np.array([-4, -2])
-
-    # Calculate distances from the fixed points
-    dist1 = np.linalg.norm(data1 - fixed_point1, axis=1)
-    dist2 = np.linalg.norm(data2 - fixed_point2, axis=1)
-
-    # Normalize distances to range [0, 1] for color mapping
-    dist1_normalized = (dist1 - dist1.min()) / (dist1.max() - dist1.min())
-    dist2_normalized = (dist2 - dist2.min()) / (dist2.max() - dist2.min())
-
-    # Linear regression to normalize beta
-    reg = LinearRegression().fit(data1, dist1_normalized)
-    betas = reg.coef_
-    betas_input_normalized_l2 = betas / np.linalg.norm(betas, ord=2)
-
-    # Create a color gradient based on the normalized distances
-    colors1 = cm.Blues(dist1_normalized)
-    colors2 = cm.Reds(dist2_normalized)
 
     # Create a figure with 4 subplots
     fig, axs = plt.subplots(1, 1, figsize=(5, 5))
 
     # Plot the data with color gradients in the first subplot
-    axs.scatter(data1[:, 0], data1[:, 1], alpha=0.5, color=colors1, label='Choice 1')
-    axs.scatter(data2[:, 0], data2[:, 1], alpha=0.5, color=colors2, label='Choice 2')
+    axs.scatter(data1[:, 0], data1[:, 1], alpha=0.5, color='blue', label='Choice 1')
+    axs.scatter(data2[:, 0], data2[:, 1], alpha=0.5, color='red', label='Choice 2')
     axs.set_xlabel('X1')
     axs.set_ylabel('X2')
     axs.set_xlim([-5, 5])

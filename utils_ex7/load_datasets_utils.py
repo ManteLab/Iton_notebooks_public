@@ -57,7 +57,7 @@ def load_datasets():
     
     for url in urls:
         target_directory = "utils_ex7/data_ctx"
-        print('Loading:', url)
+        #print('Loading:', url)
         # Run the wget command using subprocess
         subprocess.run(["wget", "-P", target_directory, url])
 
