@@ -61,4 +61,6 @@ def load_data():
         # Run the wget command using subprocess
         subprocess.run(["wget", "-P", target_directory, url])
 
+    print('Data loaded.')
+
     
