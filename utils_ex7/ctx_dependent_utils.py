@@ -511,49 +511,15 @@ def plot_projections_2d_tdr(model, order_orth):
     if order_orth[0] == 'choice' and order_orth[1] == 'input_motion' and order_orth[2] == 'input_color':
         betResp = model['betas_ch_inm_incol']
 
-        axes_limits_models['modela_x'] = [(-200, 275), (-200, 275), (-55, 55), (-55, 55)] # inv x, inv x, -, - 
-        axes_limits_models['modela_y'] = [(-55, 55), (-55, 55), (-200, 275), (-200, 275)] 
-
-        axes_limits_models['modelb_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modelb_y'] = [(-55, 55), (-55, 55), (-55, 55), (-55, 55)] 
-
-        axes_limits_models['modelc_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modelc_y'] = [(-55, 55), (-55, 55), (-55, 55), (-55, 55)]   
-
-        axes_limits_models['modeld_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modeld_y'] = [(-55, 55), (-55, 55), (-55, 55), (-55, 55)] 
 
 
     if order_orth[0] == 'input_motion' and order_orth[1] == 'choice' and order_orth[2] == 'input_color':
         betResp = model['betas_inm_ch_incol']
 
-        axes_limits_models['modela_x'] = [(-55, 55), (-55, 55), (-200, 275), (-200, 275)] 
-        axes_limits_models['modela_y'] = [(-200, 275), (-200, 275),(-55, 55), (-55, 55)] # inv x, inv x, -, - 
-
-        axes_limits_models['modelb_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modelb_y'] = [(-55, 55), (-55, 55), (-55, 55), (-55, 55)] 
-
-        axes_limits_models['modelc_x'] = [(-150, 250), (-150, 250), (-150, 250), (-150, 250)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modelc_y'] = [(-100, 200), (-100, 200), (-55, 55), (-55, 55)] 
-
-        axes_limits_models['modeld_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modeld_y'] = [(-100, 150), (-100, 150), (-55, 55), (-55, 55)] 
 
 
     if order_orth[0] == 'input_motion' and order_orth[1] == 'input_color' and order_orth[2] == 'choice':
         betResp = model['betas_inm_incol_ch']
-
-        axes_limits_models['modela_x'] = [(-55, 55), (-55, 55), (-200, 275), (-200, 275)] 
-        axes_limits_models['modela_y'] = [(-200, 275), (-200, 275),(-55, 55), (-55, 55)] # inv x, inv x, -, - 
-
-        axes_limits_models['modelb_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modelb_y'] = [(-55, 55), (-55, 55), (-55, 55), (-55, 55)] 
-
-        axes_limits_models['modelc_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modelc_y'] = [(-100, 150), (-100, 150), (-100, 150), (-100, 150)] 
-
-        axes_limits_models['modeld_x'] = [(-200, 275), (-200, 275), (-200, 275), (-200, 275)] # inv x, inv x, inv x, inv x
-        axes_limits_models['modeld_y'] = [(-65, 100), (-65, 100), (-65, 100), (-65, 100)] 
 
 
     ndim, ncond, time = betResp.shape
@@ -655,32 +621,16 @@ def plot_projections_2d_tdr(model, order_orth):
             plt.ylabel(ylabels[isub-1])
 
             if model['type'] == 'model_a':
-                axlims = axes_limits_models['modela_x'][isub-1]
-                aylims = axes_limits_models['modela_y'][isub-1]
-                #plt.xlim(axlims)
-                #plt.ylim(aylims)
                 if isub < 3:
                     plt.gca().invert_xaxis()
             
             if model['type'] == 'model_b':
-                axlims = axes_limits_models['modelb_x'][isub-1]
-                aylims = axes_limits_models['modelb_y'][isub-1]
-                #plt.xlim(axlims)
-                #plt.ylim(aylims)
                 plt.gca().invert_xaxis()
 
             if model['type'] == 'model_c':
-                axlims = axes_limits_models['modelc_x'][isub-1]
-                aylims = axes_limits_models['modelc_y'][isub-1]
-                #plt.xlim(axlims)
-                #plt.ylim(aylims)
                 plt.gca().invert_xaxis()
 
             if model['type'] == 'model_d':
-                axlims = axes_limits_models['modeld_x'][isub-1]
-                aylims = axes_limits_models['modeld_y'][isub-1]
-                #plt.xlim(axlims)
-                #plt.ylim(aylims)
                 plt.gca().invert_xaxis()
 
             # Retrieve current x and y limits

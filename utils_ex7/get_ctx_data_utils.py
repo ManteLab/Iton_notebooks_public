@@ -1,6 +1,6 @@
 import subprocess
 
-def get_data():
+def get_ctx_data():
     urls = ["https://github.com/ManteLab/Iton_notebooks_public/raw/refs/heads/main/utils_ex7/data_ctx/betas_norm_modela.mat", 
             "https://github.com/ManteLab/Iton_notebooks_public/raw/refs/heads/main/utils_ex7/data_ctx/betas_norm_modelb.mat", 
             "https://github.com/ManteLab/Iton_notebooks_public/raw/refs/heads/main/utils_ex7/data_ctx/betas_norm_modelc.mat", 
