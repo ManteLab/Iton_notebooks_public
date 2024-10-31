@@ -202,7 +202,7 @@ def plot_variance_explained(pcs):
         description='Layer #',
         layout=layout,
         style=style,
-        continuous_update=True
+        continuous_update=continuous_update
     )
     
     interact(update_plot, layer_nr=slider)
