@@ -168,6 +168,7 @@ def plot_second_order_similarity_matrix(second_order_similarity_matrix, layer_na
 
 
 def plot_variance_explained(pcs):
+    get_ipython().run_line_magic('matplotlib', 'inline' if is_colab else 'widget')
 
     def update_plot(layer_nr):
         plt.clf()
