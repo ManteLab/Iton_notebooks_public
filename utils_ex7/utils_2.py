@@ -181,7 +181,7 @@ def plot_variance_explained(pcs):
         axes[0].plot(cum_var_explained, color='C0', label='cumulative variance explained')
         axes[0].set_xlabel('# component')
         axes[0].set_ylabel('cumulative variance explained', color='C0')
-        axes[0].set_ylim(bottom=0.)
+        axes[0].set_ylim([0., 1.05])
         
         axes[1].plot(var_explained / var_explained.sum(), color='C2', label='variance explained')
         axes[1].set_ylabel('variance explained', color='C2')
