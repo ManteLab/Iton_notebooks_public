@@ -5,6 +5,22 @@ from scipy.linalg import logm
 
 
 
+def in_colab():
+    """Check if the code is running in Google Colab."""
+    try:
+        import google.colab
+        return True
+    except ImportError:
+        return False
+
+
+is_colab = in_colab()
+continuous_update = not is_colab
+
+if is_colab:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+
 
 def plot_2d_flowfield(f, space=np.linspace(-10, 10, 10), data=None, title=''):
         # Define a grid for the flow field
@@ -148,7 +164,7 @@ def simulate_noisy_3d_system(noise_level):
 
     #simulate the system
     z = np.zeros((100, 50, 3))
-    z[0] = initial_conditions
+    z[0] = initial_conditions + np.random.randn(*initial_conditions.shape) * noise_level
     for i in range(1, 100):
         z[i] = z[i-1] + linear_system(z[i-1])
 
