@@ -23,10 +23,10 @@ def load_context_dependent_models(model_id):
         betas = loadmat('utils_ex7/data_ctx/betResp_choice_inputmot_inputcol_modela.mat')
         betResp_ch_inm_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modela_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modela.mat')
         betResp_inm_ch_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modela_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modela.mat')
         betResp_inm_incol_ch = betas['betResp']
 
         data = loadmat('utils_ex7/data_ctx/Regmod_units_modela.mat') # XXw
@@ -54,10 +54,10 @@ def load_context_dependent_models(model_id):
         betas = loadmat('utils_ex7/data_ctx/betResp_choice_inputmot_inputcol_modelb.mat')
         betResp_ch_inm_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modelb_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modelb.mat')
         betResp_inm_ch_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modelb_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modelb.mat')
         betResp_inm_incol_ch = betas['betResp']
 
         data = loadmat('utils_ex7/data_ctx/Regmod_units_modelb.mat') # XXw
@@ -85,10 +85,10 @@ def load_context_dependent_models(model_id):
         betas = loadmat('utils_ex7/data_ctx/betResp_choice_inputmot_inputcol_modelc.mat')
         betResp_ch_inm_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modelc_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modelc.mat')
         betResp_inm_ch_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modelc_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modelc.mat')
         betResp_inm_incol_ch = betas['betResp']
 
         data = loadmat('utils_ex7/data_ctx/Regmod_units_modelc.mat') # XXw
@@ -116,10 +116,10 @@ def load_context_dependent_models(model_id):
         betas = loadmat('utils_ex7/data_ctx/betResp_choice_inputmot_inputcol_modeld.mat')
         betResp_ch_inm_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modeld_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_choice_inputcol_modeld.mat')
         betResp_inm_ch_incol = betas['betResp']
 
-        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modeld_v2.mat')
+        betas = loadmat('utils_ex7/data_ctx/betResp_inputmot_inputcol_choice_modeld.mat')
         betResp_inm_incol_ch = betas['betResp']
 
         data = loadmat('utils_ex7/data_ctx/Regmod_units_modeld.mat') # XXw
@@ -205,6 +205,20 @@ def show_models_geometry():
     plt.imshow(image)
     plt.axis('off')  
     plt.show()
+
+
+def show_example_trials():
+    # Load the image
+    image = Image.open('utils_ex7/example_trials.png') 
+
+    # Set the figure size (width, height) in inches
+    plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
+
+    # Plot the image
+    plt.imshow(image)
+    plt.axis('off')  
+    plt.show()
+
 
 
 def plot_psths(model):
@@ -393,7 +407,7 @@ def get_pdata():
             "pscol": [6, 5, 4, 3, 2, 1, 6, 5, 4, 3, 2, 1],
             "pjmot": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
             "pstyl": [3, 2, 1, 1, 2, 3, 3, 2, 1, 1, 2, 3],
-            "pcmap": ['#0D0D0D', '#4D4D4D', '#A6A6A6', '#A6A6A6', '#4D4D4D', '#0D0D0D','#0D0D0D', '#4D4D4D', '#A6A6A6', '#A6A6A6', '#4D4D4D', '#0D0D0D'], #['black', 'black', 'black','black', 'black', 'black'],#[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+            "pcmap": ['#00008B', '#1E90FF', '#ADD8E6', '#ADD8E6', '#1E90FF', '#00008B','#00008B', '#1E90FF', '#ADD8E6', '#ADD8E6', '#1E90FF', '#00008B'], #['black', 'black', 'black','black', 'black', 'black'],#[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
             "pdash": [1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2],
             "pwdth": [2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1],
             "pordr": 1
@@ -406,7 +420,7 @@ def get_pdata():
             "pscol": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             "pjmot": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             "pstyl": [3, 2, 1, 1, 2, 3, 3, 2, 1, 1, 2, 3],
-            "pcmap": ['#00008B', '#1E90FF', '#ADD8E6', '#ADD8E6', '#1E90FF', '#00008B','#00008B', '#1E90FF', '#ADD8E6', '#ADD8E6', '#1E90FF', '#00008B'],#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            "pcmap": ['#0D0D0D', '#4D4D4D', '#A6A6A6', '#A6A6A6', '#4D4D4D', '#0D0D0D','#0D0D0D', '#4D4D4D', '#A6A6A6', '#A6A6A6', '#4D4D4D', '#0D0D0D'],#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             "pdash": [1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2],
             "pwdth": [2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1],
             "pordr": 2
@@ -444,23 +458,25 @@ def plot_projections_2d_pca(model, context):
     pdata = get_pdata()
     #icol, irow = 0, 0
     if context == 'motion':
-        irow = 0
+        icol = 0
+        #irow = 0
     else:
-        irow = 1
+        icol = 1
+        #irow = 1
 
-    for icol in range(2): #gives the input (relevant / irrelevant)
+    for irow in range(2): #gives the input (relevant / irrelevant)
         fig, axes = plt.subplots(3, 3, figsize=(8, 8))
 
-        if irow == 0:
-            if icol == 0:
-                axes[0,0].text(-0.3, 1.1, 'Motion Context\nMotion Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+        if icol == 0:
+            if irow == 0:
+                axes[0,0].text(-0.3, 1.1, 'Motion Context\nsort trials by motion input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
             else:
-                axes[0,0].text(-0.3, 1.1, 'Motion Context\nColor Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+                axes[0,0].text(-0.3, 1.1, 'Motion Context\nsort trials by color input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
         else:
-            if icol == 0:
-                axes[0,0].text(-0.3, 1.1, 'Color Context\nMotion Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+            if irow == 0:
+                axes[0,0].text(-0.3, 1.1, 'Color Context\nsort trials by motion input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
             else:
-                axes[0,0].text(-0.3, 1.1, 'Color Context\nColor Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+                axes[0,0].text(-0.3, 1.1, 'Color Context\nsort trials by color input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
 
         for ipca1 in range(4):
             for ipca2 in range(4):
@@ -530,15 +546,13 @@ def plot_projections_2d_tdr(model, order_orth):
     nsub = 4
 
     ha = np.zeros((ncol, nrow), dtype=object)
-    axlims = [np.inf, -np.inf]
-    aylims = [np.inf, -np.inf]
 
     jtt = np.ones((time,), dtype=bool)
 
     if model['type'] == 'model_a':
         pdims = [
-            [[0, 1], [1, 0]],
-            [[1, 0], [0, 1]]
+            [[0, 1], [0, 1]],
+            [[0, 1], [0, 1]]
             ]
     else:
         pdims = [
@@ -549,9 +563,12 @@ def plot_projections_2d_tdr(model, order_orth):
     xlabels = ['choice (motion)', 'choice (motion)', 'choice (color)', 'choice (color)']
     ylabels = ['motion (motion)', 'color (motion)', 'motion (color)', 'color (color)']
 
+    irow_icol = [(0,0),(1,0),(0,1),(1,1)]
+
     # Loop through subplots
     for isub in range(1, nsub + 1):
-        irow, icol = np.unravel_index(isub - 1, (nrow, ncol))  
+        #irow, icol = np.unravel_index(isub - 1, (nrow, ncol))  
+        irow, icol = irow_icol[isub-1]
 
         # Create subplot
         ha[icol, irow] = plt.subplot(ncol, nrow, isub)
@@ -628,7 +645,8 @@ def plot_projections_2d_tdr(model, order_orth):
                 plt.gca().invert_xaxis()
 
             if model['type'] == 'model_c':
-                plt.gca().invert_xaxis()
+                if isub == 1 or isub == 4:
+                    plt.gca().invert_xaxis()
 
             if model['type'] == 'model_d':
                 plt.gca().invert_xaxis()
@@ -674,11 +692,13 @@ def plot_projections_1d(model, method, order_orth=[], context='motion'):
     pdata = get_pdata()
     #icol, irow = 0, 0
     if context == 'motion':
-        irow = 0
+        #irow = 0
+        icol = 0
         
     else:
-        irow = 1
-        model_a_tdr_labels = ['color input', 'choice', 'context']
+        #irow = 1
+        icol = 1
+        #model_a_tdr_labels = ['color input', 'choice', 'context']
 
     tdr_labels = ['choice', 'motion input', 'color input']
 
@@ -688,17 +708,17 @@ def plot_projections_1d(model, method, order_orth=[], context='motion'):
     else:
         fig, axes = plt.subplots(2, number_axes, figsize=(16, 8))
 
-    for icol in range(2): 
-        if icol == 0:
-            model_a_tdr_labels = ['motion input', 'choice', 'context']
+    for irow in range(2): #icol # input: relevant / irrelevant
+        if irow == 0:#icol
+            model_a_tdr_labels = ['choice', 'motion input', 'context']
         else:
-            model_a_tdr_labels = ['color input', 'choice', 'context']
+            model_a_tdr_labels = ['choice', 'color input', 'context']
             
         np_len = len(pdata[(icol, irow)]['pjcor'])
         jtt = np.ones((time,), dtype=bool)
 
         for id1 in range(number_axes):
-            ax = axes[icol,id1]  # Get the current subplot
+            ax = axes[irow,id1]  #icol
             ax.set_title(f'{method} {id1+1}')  # Individual panel titles
 
             # Loop over conditions and plot
@@ -744,16 +764,16 @@ def plot_projections_1d(model, method, order_orth=[], context='motion'):
     
     if context == 'motion':
         # Add a title for the first row
-        axes[0, 0].text(-0.3, 1.1, 'Motion Context\nMotion Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+        axes[0, 0].text(-0.3, 1.1, 'Motion Context\nsort trials by motion input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
 
         # Add a title for the second row
-        axes[1, 0].text(-0.3, 1.1, 'Motion Context\nColor Input', transform=axes[1, 0].transAxes, fontsize=16, va='center', ha='center')
+        axes[1, 0].text(-0.3, 1.1, 'Motion Context\nsort trials by color input', transform=axes[1, 0].transAxes, fontsize=16, va='center', ha='center')
     else:
                 # Add a title for the first row
-        axes[0, 0].text(-0.3, 1.1, 'Color Context\nMotion Input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
+        axes[0, 0].text(-0.3, 1.1, 'Color Context\nsort trials by motion input', transform=axes[0, 0].transAxes, fontsize=16, va='center', ha='center')
 
         # Add a title for the second row
-        axes[1, 0].text(-0.3, 1.1, 'Color Context\nColor Input', transform=axes[1, 0].transAxes, fontsize=16, va='center', ha='center')
+        axes[1, 0].text(-0.3, 1.1, 'Color Context\nsort trials by color input', transform=axes[1, 0].transAxes, fontsize=16, va='center', ha='center')
 
 
     # Adjust layout and show the plot
