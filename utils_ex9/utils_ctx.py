@@ -32,8 +32,8 @@ def show_network():
 
 def load_rnn():
 
-    n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1 = np.load('rnn_data/rnn_weights.npz').values()
-    coherencies_trial, conditionIds, inputs, targets = np.load('rnn_data/trial_data.npz').values()
+    n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1 = np.load('utils_ex9/rnn_data/rnn_weights.npz').values()
+    coherencies_trial, conditionIds, inputs, targets = np.load('utils_ex9/rnn_data/trial_data.npz').values()
 
     trialId = 8
     gaussian_inputs = inputs[:,:,trialId]    
