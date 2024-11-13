@@ -354,7 +354,7 @@ def change_input_orientation_without_connectivity():
 
 
     # Use interact to create a slider for c
-    interact(update, c=widgets.FloatSlider(min=50, max=100.0, step=5, value=50.0))
+    interact(update, c=widgets.FloatSlider(min=0, max=100.0, step=10, value=0))
 
 
 def remove_stimulus_with_connectivity():
