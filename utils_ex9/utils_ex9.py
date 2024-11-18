@@ -117,9 +117,9 @@ def plot_network():
 
     # Plot h_ext using a stem plot in the first subplot
     axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
-    axes[0].set_title('External Input')
+    axes[0].set_title('Contribution due to external input')
     axes[0].set_xlabel('Neurons')
-    axes[0].set_ylabel('h_ext')
+    axes[0].set_ylabel('h_ext values')
 
 
     # Plot Jij matrix in the second subplot
@@ -165,9 +165,9 @@ def change_input_strength_no_connectivity():
         
         # Stem plot for h_ext
         axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
-        axes[0].set_title('h_ext')
+        axes[0].set_title('Contribution due to external input')
         axes[0].set_xlabel('Neurons')
-        axes[0].set_ylabel('External Input')
+        axes[0].set_ylabel('h_ext Values')
         axes[0].set_ylim(-25, 25)
         
         # Jij matrix plot
@@ -197,7 +197,7 @@ def change_input_strength_with_connectivity():
     # Initialize activity to 0
     mi = np.zeros(n_hidden) 
 
-    def update(ct):
+    def update(c):
 
         theta0 = 0
         time_steps = 100
@@ -205,19 +205,18 @@ def change_input_strength_with_connectivity():
         J0 = 86
         J2 = 112
 
-        c = 10
         
         Jij = generate_connection_matrix(n_hidden, J0, J2, thetaij)
             
         # Generate h_ext and activities with the current c value
-        activities, h_ext = simulate_network(mi, N=n_hidden, time_steps=time_steps, c=c, epsilon=epsilon, theta0=theta0, Jij = Jij, ct = ct, add_noise=add_noise)
+        activities, h_ext = simulate_network(mi, N=n_hidden, time_steps=time_steps, c=c, epsilon=epsilon, theta0=theta0, Jij = Jij, ct = 0, add_noise=add_noise)
 
         # Plotting
         fig, axes = plt.subplots(1, 3, figsize=(15, 4))
         
         # Stem plot for h_ext
         axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
-        axes[0].set_title('h_ext Stem Plot')
+        axes[0].set_title('Contribution due to external Input')
         axes[0].set_xlabel('Index')
         axes[0].set_ylabel('h_ext Values')
         axes[0].set_ylim(-25, 25)
@@ -236,7 +235,7 @@ def change_input_strength_with_connectivity():
         plt.show()
 
     # Use interact to create a slider for c
-    interact(update, ct=widgets.FloatSlider(min=-10, max=10, step=2, value=1.0))
+    interact(update, c=widgets.FloatSlider(min=0.1, max=20.0, step=2, value=1.0))
 
 
 def change_input_orientation_with_connectivity():
@@ -272,9 +271,9 @@ def change_input_orientation_with_connectivity():
         
         # Stem plot for h_ext
         axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
-        axes[0].set_title('External Input')
+        axes[0].set_title('Contribution due to external Input')
         axes[0].set_xlabel('Neurons')
-        axes[0].set_ylabel('h_ext')
+        axes[0].set_ylabel('h_ext Values')
         axes[0].set_ylim(-100, 100)
         
         # Jij matrix plot
@@ -284,7 +283,7 @@ def change_input_orientation_with_connectivity():
         
         # Activities matrix plot
         im2 = axes[2].imshow(activities.T, cmap='viridis', aspect='auto')
-        axes[2].set_title('Activities Matrix')
+        axes[2].set_title('Neuron Activity')
         fig.colorbar(im2, ax=axes[2])
         
         plt.tight_layout()
@@ -334,8 +333,8 @@ def change_input_orientation_without_connectivity():
         
         # Stem plot for h_ext
         axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
-        axes[0].set_title('h_ext Stem Plot')
-        axes[0].set_xlabel('Index')
+        axes[0].set_title('Contribution due to external Input')
+        axes[0].set_xlabel('Neurons')
         axes[0].set_ylabel('h_ext Values')
         axes[0].set_ylim(-100, 100)
         
@@ -346,7 +345,7 @@ def change_input_orientation_without_connectivity():
         
         # Activities matrix plot
         im2 = axes[2].imshow(activities.T, cmap='viridis', aspect='auto')
-        axes[2].set_title('Activities Matrix')
+        axes[2].set_title('Neuron Activity')
         fig.colorbar(im2, ax=axes[2])
         
         plt.tight_layout()
@@ -389,8 +388,8 @@ def remove_stimulus_with_connectivity():
         
         # Stem plot for h_ext
         axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
-        axes[0].set_title('h_ext Stem Plot')
-        axes[0].set_xlabel('Index')
+        axes[0].set_title('Contribution due to external Input')
+        axes[0].set_xlabel('Neurons')
         axes[0].set_ylabel('h_ext Values')
         axes[0].set_ylim(-100, 100)
         
@@ -401,7 +400,7 @@ def remove_stimulus_with_connectivity():
         
         # Activities matrix plot
         im2 = axes[2].imshow(activities.T, cmap='viridis', aspect='auto')
-        axes[2].set_title('Activities Matrix')
+        axes[2].set_title('Neuron Activity')
         fig.colorbar(im2, ax=axes[2])
         
         plt.tight_layout()
@@ -447,8 +446,8 @@ def remove_stimulus_without_connectivity():
         
         # Stem plot for h_ext
         axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
-        axes[0].set_title('h_ext Stem Plot')
-        axes[0].set_xlabel('Index')
+        axes[0].set_title('Contribution due to external Input')
+        axes[0].set_xlabel('Neurons')
         axes[0].set_ylabel('h_ext Values')
         axes[0].set_ylim(-100, 100)
         
