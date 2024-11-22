@@ -254,9 +254,9 @@ def change_input_orientation_with_connectivity():
     Jij = generate_connection_matrix(n_hidden, J0, J2, thetaij)
         
     # Generate h_ext and activities with the current c value
-    activities, h_ext = simulate_network(mi, N=n_hidden, time_steps=time_steps, c=c, epsilon=epsilon, theta0=theta0, Jij = Jij, ct = 100, add_noise=add_noise)
+    activities_pre, h_ext_pre = simulate_network(mi, N=n_hidden, time_steps=time_steps, c=c, epsilon=epsilon, theta0=theta0, Jij = Jij, ct = 0, add_noise=add_noise)
 
-    mi = activities[-1, :]
+    mi = activities_pre[-1, :]
 
     # Define the update function
     def update(c):
@@ -266,11 +266,14 @@ def change_input_orientation_with_connectivity():
         # Generate h_ext and activities with the current c value
         activities, h_ext = simulate_network(mi, N=n_hidden, time_steps=time_steps, c=c, epsilon=epsilon, theta0=theta0, Jij = Jij, ct = 0, add_noise=add_noise)
 
+        activities_all = np.concatenate((activities_pre[:-10,:], activities), axis=0)
+
         # Plotting
         fig, axes = plt.subplots(1, 3, figsize=(15, 4))
         
         # Stem plot for h_ext
         axes[0].stem(range(len(h_ext)), h_ext, linefmt='b-', markerfmt='bo', basefmt='r-')
+        #axes[0].stem(range(len(h_ext)), h_ext_pre+h_ext, linefmt='r-', markerfmt='ro', basefmt='r-')
         axes[0].set_title('Contribution due to external Input')
         axes[0].set_xlabel('Neurons')
         axes[0].set_ylabel('h_ext Values')
@@ -282,7 +285,7 @@ def change_input_orientation_with_connectivity():
         fig.colorbar(im1, ax=axes[1])
         
         # Activities matrix plot
-        im2 = axes[2].imshow(activities.T, cmap='viridis', aspect='auto')
+        im2 = axes[2].imshow(activities_all.T, cmap='viridis', aspect='auto')
         axes[2].set_title('Neuron Activity')
         fig.colorbar(im2, ax=axes[2])
         
@@ -292,7 +295,7 @@ def change_input_orientation_with_connectivity():
 
 
     # Use interact to create a slider for c
-    interact(update, c=widgets.FloatSlider(min=50, max=100.0, step=5, value=50.0))
+    interact(update, c=widgets.FloatSlider(min=0, max=100.0, step=20, value=0.0))
 
 
 def change_input_orientation_without_connectivity():
@@ -458,7 +461,7 @@ def remove_stimulus_without_connectivity():
         
         # Activities matrix plot
         im2 = axes[2].imshow(activities.T, cmap='viridis', aspect='auto')
-        axes[2].set_title('Activities Matrix')
+        axes[2].set_title('Neuron Activity')
         fig.colorbar(im2, ax=axes[2])
         
         plt.tight_layout()
