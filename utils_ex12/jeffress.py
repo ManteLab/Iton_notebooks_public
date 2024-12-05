@@ -9,7 +9,7 @@ import matplotlib.gridspec as gridspec
 def jeffress(max_angle=180):
     def visualize_plot(degree, num_neurons: int):
         def plot_owl(ax, degree):
-            img = plt.imread("https://raw.githubusercontent.com/ManteLab/Iton_notebooks_public/refs/heads/main/utils_ex12/Figures/owl_head.png")
+            img = plt.imread("utils_ex12/Figures/owl_head.png")
             plt.imshow(img, extent=[-0.5, 0.5, -0.5, 0.5])
 
             # Add neurons in a circle
