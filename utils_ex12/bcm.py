@@ -164,7 +164,7 @@ def iplot_bcm_model():
                                  layout=Layout(width='500px'))
     w2_init_slider = FloatSlider(value=0.5, min=0.0, max=1.0, step=0.1, description='w2 initial', style=style,
                                  layout=Layout(width='500px'))
-    use_decay_checkbox = IntSlider(value=0, min=0, max=1, description='Use weight decay', style=style, layout=Layout(width='100px'))
+    use_decay_checkbox = IntSlider(value=0, min=0, max=1, description='Use weight decay', style=style, layout=Layout(width='500px'))
     update_button = Button(description="Update", button_style='success')
 
     update_button.on_click(lambda x: update_plot(eta=eta_slider.value,
