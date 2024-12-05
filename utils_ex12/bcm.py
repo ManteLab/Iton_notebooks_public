@@ -164,8 +164,7 @@ def iplot_bcm_model():
                                  layout=Layout(width='500px'))
     w2_init_slider = FloatSlider(value=0.5, min=0.0, max=1.0, step=0.1, description='w2 initial', style=style,
                                  layout=Layout(width='500px'))
-    use_decay_checkbox = widgets.Checkbox(value=False, description='Use weight decay', style=style,
-                                          layout=Layout(width='500px'))
+    use_decay_checkbox = IntSlider(value=0, min=0, max=1, description='Use weight decay', style=style, layout=Layout(width='100px'))
     update_button = Button(description="Update", button_style='success')
 
     update_button.on_click(lambda x: update_plot(eta=eta_slider.value,
@@ -180,7 +179,7 @@ def iplot_bcm_model():
                                                  phase_shift=phase_shift_slider.value,
                                                  w1_init=w1_init_slider.value,
                                                  w2_init=w2_init_slider.value,
-                                                 use_decay=use_decay_checkbox.value
+                                                 use_decay=bool(use_decay_checkbox.value)
                                                  ))
 
     # Setup the tabs

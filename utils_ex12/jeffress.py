@@ -1,15 +1,23 @@
 from IPython.display import display
+from PIL import Image
 from brian2 import *
 import matplotlib.pyplot as plt
 import matplotlib
 from ipywidgets import Output, VBox, Button, IntSlider, widgets
 import matplotlib.gridspec as gridspec
+import urllib
 
 
 def jeffress(max_angle=180):
     def visualize_plot(degree, num_neurons: int):
         def plot_owl(ax, degree):
-            img = plt.imread("utils_ex12/Figures/owl_head.png")
+            url = "https://raw.githubusercontent.com/ManteLab/Iton_notebooks_public/refs/heads/main/utils_ex12/Figures/owl_head.png"
+
+            with urllib.request.urlopen(url) as url_response:
+                img = Image.open(url_response)
+                img = np.array(img)
+
+            # img = plt.imread("https://raw.githubusercontent.com/ManteLab/Iton_notebooks_public/refs/heads/main/utils_ex12/Figures/owl_head.png")
             plt.imshow(img, extent=[-0.5, 0.5, -0.5, 0.5])
 
             # Add neurons in a circle
