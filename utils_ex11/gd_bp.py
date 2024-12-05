@@ -793,7 +793,7 @@ def backprop():
             reset_gradients(loss)
             loss.grad = 1.0
 
-            topsorted.insert(0, loss)
+            # topsorted.insert(0, loss)
             already_visited = {y, x1}
 
             for i, node in enumerate(topsorted):
