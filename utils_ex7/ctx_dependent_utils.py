@@ -11,7 +11,25 @@ import os
 # Figures live in utils_ex7/figures/, where the notebook's setup cell downloads
 # them. Resolved relative to this module so they do not depend on the
 # notebook's working directory.
-FIGURES_DIR = os.path.join(os.path.dirname(__file__), "figures")
+MODULE_DIR = os.path.dirname(__file__)
+FIGURES_DIR = os.path.join(MODULE_DIR, "figures")
+
+
+def _figure(name):
+    """Return the path to a figure, accepting either download layout.
+
+    This repository's notebooks download into utils_ex7/figures/. The notebook 7
+    still published on Iton_notebooks_public downloads flat into utils_ex7/, so
+    both are tried. The flat branch can go once that notebook is republished.
+    """
+    candidates = [os.path.join(FIGURES_DIR, name), os.path.join(MODULE_DIR, name)]
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+    raise FileNotFoundError(
+        f"{name} not found. Looked in: {', '.join(candidates)}. "
+        "Run the notebook's setup cell before this one."
+    )
 
 def load_context_dependent_models(model_id):
     # common parameters
@@ -189,7 +207,7 @@ def load_context_dependent_models(model_id):
 
 def show_task():
     # Load the image
-    image = Image.open(os.path.join(FIGURES_DIR, "task.png"))
+    image = Image.open(_figure("task.png"))
 
     # Set the figure size (width, height) in inches
     plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
@@ -202,7 +220,7 @@ def show_task():
 
 def show_models_geometry():
     # Load the image
-    image = Image.open(os.path.join(FIGURES_DIR, "models_v2.png"))
+    image = Image.open(_figure("models_v2.png"))
 
     # Set the figure size (width, height) in inches
     plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
@@ -215,7 +233,7 @@ def show_models_geometry():
 
 def show_example_trials():
     # Load the image
-    image = Image.open(os.path.join(FIGURES_DIR, "example_trials.png"))
+    image = Image.open(_figure("example_trials.png"))
 
     # Set the figure size (width, height) in inches
     plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
