@@ -21,7 +21,17 @@ E_L = -54.4  # Leak reversal potential, mV.
 V_REST = -65.0  # Resting membrane potential, mV.
 
 _SLIDER_STYLE = {"description_width": "initial"}
-_SLIDER_LAYOUT = Layout(width="500px")
+
+
+def _slider_layout():
+    """A fresh slider Layout, built by the call that displays it.
+
+    A Layout is itself a widget model. Building one at import time puts it in
+    the notebook's imports cell, and Colab does not reliably resolve a model
+    from an earlier cell: the slider silently renders as nothing. Verified on
+    Colab 2026-09-16. utils_ex13's working sliders build theirs inline too.
+    """
+    return Layout(width="500px")
 
 
 def _limit_ratio(numerator, denominator, limit: float):
@@ -170,7 +180,7 @@ def iplot_action_potential(t_max: float = 50.0, dt: float = 0.01):
     current_slider = FloatSlider(
         min=0.0, max=25.0, step=0.5, value=10.0,
         description="Injected current (uA/cm^2):",
-        style=_SLIDER_STYLE, layout=_SLIDER_LAYOUT,
+        style=_SLIDER_STYLE, layout=_slider_layout(),
     )
     output = Output()
 
@@ -215,12 +225,12 @@ def iplot_fi_curve(t_max: float = 150.0, dt: float = 0.01):
     max_current_slider = FloatSlider(
         min=5.0, max=50.0, step=1.0, value=20.0,
         description="Largest current in the sweep (uA/cm^2):",
-        style=_SLIDER_STYLE, layout=_SLIDER_LAYOUT,
+        style=_SLIDER_STYLE, layout=_slider_layout(),
     )
     n_points_slider = IntSlider(
         min=5, max=40, step=1, value=30,
         description="Number of currents:",
-        style=_SLIDER_STYLE, layout=_SLIDER_LAYOUT,
+        style=_SLIDER_STYLE, layout=_slider_layout(),
     )
     sweep_button = Button(description="Run sweep", button_style="success")
     output = Output()
