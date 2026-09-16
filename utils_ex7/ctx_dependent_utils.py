@@ -6,6 +6,12 @@ from scipy.io import loadmat
 from PIL import Image
 from mpl_toolkits.axes_grid1 import host_subplot
 import matplotlib.ticker as ticker
+import os
+
+# Figures live in utils_ex7/figures/, where the notebook's setup cell downloads
+# them. Resolved relative to this module so they do not depend on the
+# notebook's working directory.
+FIGURES_DIR = os.path.join(os.path.dirname(__file__), "figures")
 
 def load_context_dependent_models(model_id):
     # common parameters
@@ -183,7 +189,7 @@ def load_context_dependent_models(model_id):
 
 def show_task():
     # Load the image
-    image = Image.open('utils_ex7/task.png') 
+    image = Image.open(os.path.join(FIGURES_DIR, "task.png"))
 
     # Set the figure size (width, height) in inches
     plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
@@ -196,7 +202,7 @@ def show_task():
 
 def show_models_geometry():
     # Load the image
-    image = Image.open('utils_ex7/models_v2.png') 
+    image = Image.open(os.path.join(FIGURES_DIR, "models_v2.png"))
 
     # Set the figure size (width, height) in inches
     plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
@@ -209,7 +215,7 @@ def show_models_geometry():
 
 def show_example_trials():
     # Load the image
-    image = Image.open('utils_ex7/example_trials.png') 
+    image = Image.open(os.path.join(FIGURES_DIR, "example_trials.png"))
 
     # Set the figure size (width, height) in inches
     plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
@@ -599,8 +605,8 @@ def plot_projections_2d_tdr(model, order_orth):
                 raise ValueError('More than one condition')
 
             # Response on first sample
-            ron[ip, 0] = betResp[id1, jj, 0]
-            ron[ip, 1] = betResp[id2, jj, 0]
+            ron[ip, 0] = betResp[id1, jj, 0].item()
+            ron[ip, 1] = betResp[id2, jj, 0].item()
 
 
         # Loop over conditions and plot
