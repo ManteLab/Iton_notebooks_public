@@ -171,7 +171,7 @@ def plot_sims(C_size=11, num_sims=30 if not is_colab else 5):
         
         return {'fig': fig, 'axes': axes, 'evidence_line': evidence_line, 'sim_lines': sim_lines}
     
-    state = setup()
+    state = setup() if not is_colab else {'needs_setup': True}
     state['random_seed'] = 42
 
     def update_plot(C_dir, C, k, alpha, sigma_a, sigma_s, lambda_, fixed_noise):
@@ -446,7 +446,7 @@ def plot_single_neuron(mat_data):
         
         return {'fig': fig, 'axes': axes, 'neuron_line': neuron_line}
     
-    state = setup()
+    state = setup() if not is_colab else {'needs_setup': True}
 
     def update_plot(neuron_idx):
         maybe_setup(setup, state)
@@ -508,7 +508,7 @@ def plot_neuron_by_choice(mat_data):
         
         return {'fig': fig, 'axes': axes, 'correct_lines': correct_lines, 'incorrect_lines': incorrect_lines}
     
-    state = setup()
+    state = setup() if not is_colab else {'needs_setup': True}
 
     def update_plot(neuron_idx):
         maybe_setup(setup, state)
@@ -593,7 +593,7 @@ def plot_neuron_by_coherence(mat_data):
         
         return {'fig': fig, 'axes': axes, 'correct_lines': correct_lines, 'incorrect_lines': incorrect_lines}
     
-    state = setup()
+    state = setup() if not is_colab else {'needs_setup': True}
     
 
     def update_plot(neuron_idx):
@@ -690,7 +690,7 @@ def plot_aggregated_neurons(mat_data):
         
         return {'fig': fig, 'axes': axes, 'lines': lines}
     
-    state = setup()
+    state = setup() if not is_colab else {'needs_setup': True}
 
     def update_plot(delta_threshold):
         maybe_setup(setup, state)
@@ -794,7 +794,7 @@ def plot_sims_conditions(mat_data):
         
         return {'fig': fig, 'axes': axes, 'sim_lines': sim_lines}
     
-    state = setup()
+    state = setup() if not is_colab else {'needs_setup': True}
     state['random_seed'] = 42
 
     def update_plot(alpha, sigma_a, sigma_s, lambda_, fixed_noise):
