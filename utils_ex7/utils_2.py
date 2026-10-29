@@ -168,23 +168,31 @@ def plot_second_order_similarity_matrix(second_order_similarity_matrix, layer_na
 
 
 def plot_variance_explained(pcs):
+    """Explore each layer's variance on logarithmic, one-based PC axes."""
     get_ipython().run_line_magic('matplotlib', 'inline' if is_colab else 'widget')
 
     def update_plot(layer_nr):
-        plt.clf()
+        # Clearing shared log axes can reset their limits to zero.
+        plt.close()
         layer_name = list(pcs.keys())[layer_nr]
         _, var_explained, cum_var_explained = pcs[layer_name]
+        components = np.arange(1, len(cum_var_explained) + 1)
         
         host = host_subplot(111)
         parasite = host.twinx()
         axes = [host, parasite]
         
-        axes[0].plot(cum_var_explained, color='C0', label='cumulative variance explained')
-        axes[0].set_xlabel('# component')
+        axes[0].plot(components, cum_var_explained, color='C0', label='cumulative variance explained')
+        axes[0].set_xlabel("Principal component")
+        axes[0].set_xscale("log")
+        ticks = sorted({pc for pc in (1, 2, 4, 10, 100, components.size) if pc <= components.size})
+        axes[0].set_xticks(ticks, labels=[str(pc) for pc in ticks])
+        axes[0].set_xlim(1, components.size)
+        axes[0].grid(axis="x", alpha=0.2)
         axes[0].set_ylabel('cumulative variance explained', color='C0')
         axes[0].set_ylim([0., 1.05])
         
-        axes[1].plot(var_explained / var_explained.sum(), color='C2', label='variance explained')
+        axes[1].plot(components, var_explained / var_explained.sum(), color='C2', label='variance explained')
         axes[1].set_ylabel('variance explained', color='C2')
         axes[1].set_yscale('log')
         axes[1].set_ylim([1e-8, 1e-0])

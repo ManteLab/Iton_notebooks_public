@@ -352,6 +352,7 @@ def plot_beta_norm(model_a, model_b, model_c, model_d):
         axes[id].legend()
 
 def plot_pca_var_explained(model_a, model_b, model_c, model_d):
+    """Plot cumulative and individual variance against logarithmic PC number."""
     # Create a figure with 4 subplots side by side
     fig, axs = plt.subplots(1, 4, figsize=(20, 5), constrained_layout=True)
 
@@ -359,6 +360,7 @@ def plot_pca_var_explained(model_a, model_b, model_c, model_d):
 
     for i, ax in enumerate(axs):
         model = models[i]
+        components = np.arange(1, model["per_var_pca"].size + 1)
 
         # Create the primary (host) and secondary (parasite) axes
         host = ax
@@ -366,20 +368,24 @@ def plot_pca_var_explained(model_a, model_b, model_c, model_d):
         axes = [host, parasite]
         
         # Plot on the primary axis
-        axes[0].plot(np.cumsum(model['per_var_pca']), color='C0', label='cumulative variance explained')
-        axes[0].set_xlabel('# component')
+        axes[0].plot(components, np.cumsum(model['per_var_pca']), color='C0', label='cumulative variance explained')
+        axes[0].set_xlabel("Principal component")
+        axes[0].set_xscale("log")
+        ticks = sorted({pc for pc in (1, 2, 4, 10, 100, components.size) if pc <= components.size})
+        axes[0].set_xticks(ticks, labels=[str(pc) for pc in ticks])
+        axes[0].set_xlim(1, components.size)
+        axes[0].grid(axis="x", alpha=0.2)
 
         # Plot on the secondary axis
-        axes[1].plot(model['per_var_pca'] / sum(model_a['per_var_pca']), color='C2', label='variance explained')  
+        axes[1].plot(components, model['per_var_pca'] / sum(model_a['per_var_pca']), color='C2', label='variance explained')
         axes[1].set_yscale('log')
         axes[0].set_title(model['type'])
-        axes[0].legend()
-        axes[1].legend()
+        axes[0].legend(loc="lower right")
+        axes[1].legend(loc="upper right")
         
         # Only add legend to the first subplot for clarity
         if i == 0:
             
-            axes[0].set_xlabel('# component')
             axes[0].set_ylabel('cumulative variance explained', color='C0')
             axes[1].set_ylabel('variance explained', color='C2')
             
