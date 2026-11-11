@@ -1,63 +1,47 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-from ipywidgets import interact, widgets
-from PIL import Image
-
-from ipywidgets import FloatSlider, Button, VBox, Output, Layout
-import ipywidgets as widgets
-from IPython.display import display
-import numpy as np
-import matplotlib.cm as cm
-from ipywidgets import interact, widgets
-
-import h5py
-
+import os
 import warnings
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+import numpy as np
+from IPython.display import display
+from ipywidgets import Button, Output, VBox
 
 warnings.filterwarnings("ignore")
 
-
-def show_network():
-    # Load the image
-    image = Image.open('utils_ex9/ctx_rnn.png') 
-
-    # Set the figure size (width, height) in inches
-    plt.figure(figsize=(15, 12))  # Adjust the values as needed for size
-
-    # Plot the image
-    plt.imshow(image)
-    plt.axis('off')  
-    plt.show()
+# The RNN arrays live under this module's own directory, where the notebook's
+# setup cell downloads them. Resolved relative to the module so they do not
+# depend on the notebook's working directory.
+RNN_DATA_DIR = os.path.join(os.path.dirname(__file__), "rnn_data")
 
 def load_rnn():
 
-    n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1 = np.load('utils_ex9/rnn_data/rnn_weights.npz').values()
-    coherencies_trial, conditionIds, inputs, targets = np.load('utils_ex9/rnn_data/trial_data.npz').values()
+    n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1 = np.load(os.path.join(RNN_DATA_DIR, "rnn_weights.npz")).values()
+    coherencies_trial, conditionIds, inputs, targets = np.load(os.path.join(RNN_DATA_DIR, "trial_data.npz")).values()
     color_signal = 1
     motion_signal = 0
 
     trialId = 8
 
-    gaussian_inputs = inputs[:,:,trialId]    
+    gaussian_inputs = inputs[:,:,trialId]
 
     pulse_inputs = np.zeros(inputs.shape)
     vector = np.zeros((1, 1400), dtype=float)
     noise = np.random.randn(1400)
     pulse_inputs[color_signal,:,trialId] = vector
     random_indices = np.random.choice(1400, size=5, replace=False)
-    vector[0, random_indices] = 0.2
+    vector[0, random_indices] = 1.0
     pulse_inputs[motion_signal,:,trialId] = vector
-    
+
 
     step_inputs = np.zeros(inputs.shape)
     vector = np.zeros((1, 1400), dtype=float)
     noise = np.random.randn(1000)
     step_inputs[color_signal,:,trialId] = vector
     step_inputs[1,100:1100,trialId] = noise / 30
-    vector[0, 100: 1100] = 0.2
+    vector[0, 100: 1100] = 1.0
     step_inputs[motion_signal,:,trialId] = vector
-    
+
 
     pulse_inputs = pulse_inputs[:,:,trialId]
     step_inputs = step_inputs[:,:,trialId]
@@ -119,32 +103,6 @@ def run_rnn(n_Wru_v, n_Wrr_n, m_Wzr_n, n_bx0_c, n_bx_1, m_bz_1, dt, tau,
     return n_r_t, m_z_t, n_r0_1, n_x_t, n_x0_1
 
 
-def load_weights(path_to_weights, net_id):
-        # load network weights
-        # path_to_weights: (str), path to hdf5-file with stored weight matrices
-        # net_id: (integer), number of network in hdf5-file to load
-
-        # n_Wru_v: [n_units, n_inputs], input weights
-        # n_Wrr_n: [n_units, n_units], recurrent weights
-        # m_Wzr_n: [n_outputs, n_inputs], output weights
-        # n_x0_c: [n_units, n_contexts], initial conditions per context
-        # n_bx_1: [n_units, 1], bias of hidden units
-        # m_bz_1: [n_outputs, 1], bias of output units
-
-        name_dataset = '/NetNr' + str(net_id) + '/final'
-
-        f = h5py.File(path_to_weights, 'r')
-        n_Wru_v = np.asarray(f[name_dataset + '/n_Wru_v']).T
-        n_Wrr_n = np.asarray(f[name_dataset + '/n_Wrr_n']).T
-        m_Wzr_n = np.asarray(f[name_dataset + '/m_Wzr_n']).T
-        n_x0_c = np.asarray(f[name_dataset + '/n_x0_c']).T
-        n_bx_1 = np.asarray(f[name_dataset + '/n_bx_1']).T
-        m_bz_1 = np.asarray(f[name_dataset + '/m_bz_1']).T
-        f.close()
-
-        return n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1
-
-
 
 
 def run_one_forwardPass(n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1,
@@ -182,7 +140,6 @@ def run_one_forwardPass(n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1,
 
     return forwardPass
 
-import numpy as np
 
 def normalize(vec):
     """Normalize a vector."""
@@ -197,10 +154,13 @@ def compute_dot_products(n_Wru_v, m_Wzr_n):
     input_color = n_Wru_v[:, 1]
     context_m = n_Wru_v[:, 2]
     context_c = n_Wru_v[:, 3]
-    
-    # Extract and normalize output vector
-    output = normalize(m_Wzr_n.T)
-    
+
+    # Extract and normalize output vector. Flattened to 1-D: m_Wzr_n.T is a
+    # (n, 1) column, so np.dot against the 1-D input vectors below returns a
+    # shape-(1,) array, which NumPy >= 2 refuses to assign into dot_prods[i, j]
+    # (it was only a DeprecationWarning under NumPy 1.x).
+    output = normalize(m_Wzr_n.T).ravel()
+
     # Normalize the input vectors
     input_motion = normalize(input_motion)
     input_color = normalize(input_color)
@@ -215,7 +175,7 @@ def compute_dot_products(n_Wru_v, m_Wzr_n):
                 dot_prods[i,j] = np.dot(vec1, vec2)
             if i > j:
                 dot_prods[i,j] = np.dot(vec2, vec1)
-    
+
     return dot_prods
 
 def qr_orthogonalize_with_sign(n_Wru_v, m_Wzr_n):
@@ -236,43 +196,23 @@ def qr_orthogonalize_with_sign(n_Wru_v, m_Wzr_n):
     input_color = normalize(n_Wru_v[:, 1])
     context_m = normalize(n_Wru_v[:, 2])
     context_c = normalize(n_Wru_v[:, 3])
-    
+
     # Extract and normalize output vector
     output = normalize(m_Wzr_n.T)
 
 
     kk = np.hstack([input_motion.reshape(-1, 1), input_color.reshape(-1, 1), context_m.reshape(-1, 1), context_c.reshape(-1, 1), output])
-    
+
     # Perform QR decomposition
     qq, rr = np.linalg.qr(kk)
 
     # Compute the sign consistency factor (sign of the dot products)
     sgn = np.sign(np.sum(qq[:, :kk.shape[1]] * kk, axis=0))
-    
+
     # Ensure sign consistency by adjusting qq
     xx = qq[:, :kk.shape[1]] * sgn
 
     return xx[:,-1]
-
-def orthogonalize_output(n_Wru_v, m_Wzr_n):
-    """
-    Orthogonalize the output vector against input vectors.
-    """
-    # Extract input vectors
-    input_motion = normalize(n_Wru_v[:, 0])
-    input_color = normalize(n_Wru_v[:, 1])
-    context = normalize(n_Wru_v[:, 2] - n_Wru_v[:, 3])
-    
-    # Extract and normalize output vector
-    output = normalize(m_Wzr_n)
-    
-    # Orthogonalize output against input vectors
-    output -= np.dot(output, input_motion) * input_motion
-    output -= np.dot(output, input_color) * input_color
-    output -= np.dot(output, context) * context
-    output = normalize(output)
-    
-    return output
 
 
 def plot_rnn():
@@ -280,7 +220,7 @@ def plot_rnn():
 
     # Plotting
     fig, axes = plt.subplots(1, 4, figsize=(15, 4))
-    
+
     # Stem plot for h_ext
     axes[0].stem(range(len(n_Wru_v[:,0])), normalize(n_Wru_v[:,0]), linefmt='b-', markerfmt='bo', basefmt='r-')
     axes[0].set_title('Contribution due to Motion Input')
@@ -305,8 +245,8 @@ def plot_rnn():
     axes[3].set_xlabel('Neurons')
     axes[3].set_ylabel('weights')
     axes[3].set_ylim(-0.5, 0.5)
-    
-    
+
+
     plt.tight_layout()
     plt.show()
 
@@ -318,7 +258,7 @@ def generate_rnn_data():
     n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1, gaussian_inputs, pulse_inputs, step_inputs, conditionId = load_rnn()
 
     # Update the plot (triggered by the button)
-    def update_plot(input_type="gaussian input", amplitude = '+1 choice 1', context = 'motion context', add_noise = False, ortho = False):  
+    def update_plot(input_type="gaussian input", amplitude = '+1 choice 1', context = 'motion context', add_noise = False, ortho = False):
 
         #n_Wru_v, n_Wrr_n, m_Wzr_n, n_x0_c, n_bx_1, m_bz_1, gaussian_inputs, pulse_inputs, step_inputs, conditionId = load_rnn(change_trial)
 
@@ -340,8 +280,8 @@ def generate_rnn_data():
         if (np.sum(inputs[0,:,0]) < 0 and amp == 1) or (np.sum(inputs[0,:,0]) > 0 and amp == -1):
             new_inputs[0,:,0] = inputs[0,:,0] * (-1)
             new_inputs[1,:,0] = inputs[1,:,0] * (-1)
- 
-            
+
+
         # context signals
         #if context >= 0:
         #    new_inputs[2,:,0] = 0
@@ -355,7 +295,7 @@ def generate_rnn_data():
         else:
             new_inputs[2,:,0] = 0
             new_inputs[3,:,0] = 1
-        
+
         # generate data
         if add_noise == True:
             net_noise = 0.1
@@ -369,7 +309,6 @@ def generate_rnn_data():
         output_weights = m_Wzr_n.T
         context_weights = n_Wru_v[:, 2].T - n_Wru_v[:, 3].T
 
-        #output_weights_orth = orthogonalize_output(n_Wru_v, m_Wzr_n)
 
         output_weights_orth = qr_orthogonalize_with_sign(n_Wru_v, m_Wzr_n)
 
@@ -387,7 +326,7 @@ def generate_rnn_data():
 
 
             # Adjust the spacing between subplots
-            plt.subplots_adjust(wspace=0.4, hspace=0.8) 
+            plt.subplots_adjust(wspace=0.4, hspace=0.8)
 
             ax = plt.subplot(3, 4, 1)
             ax.plot(inputs[0, :, trial_id], label='motion input', color = 'black')
@@ -446,9 +385,9 @@ def generate_rnn_data():
             im = ax.imshow(dot_prods)
             # Set custom labels for the x-axis
             ax.set_xticks(range(5))  # Positions of the ticks
-            ax.set_xticklabels(['motion', 'color', 'ctx-motion', 'ctx-color', 'output'], rotation=45, ha='right')  
+            ax.set_xticklabels(['motion', 'color', 'ctx-motion', 'ctx-color', 'output'], rotation=45, ha='right')
             ax.set_yticks(range(5))  # Positions of the ticks
-            ax.set_yticklabels(['motion', 'color', 'ctx-motion', 'ctx-color', 'output'])  
+            ax.set_yticklabels(['motion', 'color', 'ctx-motion', 'ctx-color', 'output'])
             cbar = plt.colorbar(im, ax=ax)
             cbar.set_label('dot product')  # Optional: label for the colorbar
 
@@ -494,8 +433,8 @@ def generate_rnn_data():
     context1_slider = widgets.FloatSlider(min=-1, max=1, step=0.1, value=1, description='Context',continuous_update=False)
     context_dropdown = widgets.Dropdown(options=["motion context", "color context"], value="motion context", description="Context")
     #context2_slider = widgets.FloatSlider(min=0, max=1, step=0.1, value=0, description='Context 2',continuous_update=False)
-    orth_checkbox = widgets.Checkbox(value=False, description='Orthogonalize Output') 
-    add_noise_checkbox = widgets.Checkbox(value=False, description='Add noise') 
+    orth_checkbox = widgets.Checkbox(value=False, description='Orthogonalize Output')
+    add_noise_checkbox = widgets.Checkbox(value=False, description='Add noise')
     input_type_dropdown = widgets.Dropdown(options=["gaussian input", "pulse input", "step input" ], value="gaussian input", description="Input type")
     amplitude_dropdown = widgets.Dropdown(options=["+1 choice 1", "-1 choice 2"], value="+1 choice 1", description="Choice")
 
