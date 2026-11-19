@@ -1,9 +1,37 @@
-import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
 from IPython.display import display
-from ipywidgets import Button, FloatSlider, Layout, Output, VBox
+from ipywidgets import Button, FloatSlider, HBox, Layout, Output, VBox
 from scipy.interpolate import interp1d
+
+
+def _tab_bar(titles, pages, on_select=None):
+    """Return a row of buttons that shows one page at a time.
+
+    Google Colab renders nothing for an ipywidgets Tab, so plain buttons stand
+    in for the tab headers and hide every page except the selected one.
+
+    Args:
+        titles: Button label for each page.
+        pages: Widgets to show one at a time, in the same order as titles.
+        on_select: Optional callback called with the selected page index.
+
+    Returns:
+        HBox: The row of buttons. The first page is selected initially.
+    """
+    buttons = [Button(description=title, layout=Layout(width="auto")) for title in titles]
+
+    def select(index):
+        for i, (button, page) in enumerate(zip(buttons, pages)):
+            button.button_style = "info" if i == index else ""
+            page.layout.display = None if i == index else "none"
+        if on_select is not None:
+            on_select(index)
+
+    for i, button in enumerate(buttons):
+        button.on_click(lambda _, i=i: select(i))
+    select(0)
+    return HBox(buttons)
 
 
 def iplot_stdp_model():
@@ -169,12 +197,10 @@ def iplot_stdp_model():
                                layout=Layout(width='500px'))
     submit_button = Button(description="Submit", button_style='success')
 
-    # Setup the tabs
-    tab = widgets.Tab()
-    tab.children = [
-        VBox([A_pos_slider, A_neg_slider, tau_pos_slider, tau_neg_slider, config_update_button, output_plot]),
-        VBox([ t_slider, submit_button, output_plot])]
-    tab.titles = ('Configuration', 'Add value')
+    # Setup the tabs; both pages share the plot below them
+    config_page = VBox([A_pos_slider, A_neg_slider, tau_pos_slider, tau_neg_slider, config_update_button])
+    input_page = VBox([t_slider, submit_button])
+    tab_bar = _tab_bar(("Configuration", "Add value"), (config_page, input_page))
 
     # set the default configuration
     A_pos_slider.value = 0.1
@@ -200,6 +226,6 @@ def iplot_stdp_model():
     config_update_button.on_click(button_config_on_click_action)
     submit_button.on_click(button_submit_on_click_action)
 
-    display(tab)
+    display(VBox([tab_bar, config_page, input_page, output_plot]))
 
     update_plot(None)

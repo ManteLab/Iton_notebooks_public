@@ -1,11 +1,40 @@
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 from IPython.display import HTML, display
-from ipywidgets import Button, IntSlider, Layout, Output, VBox
+from ipywidgets import Button, HBox, IntSlider, Layout, Output, VBox
 
 from utils_ex10.odor import APC_circuit
 
 log_weights = False
+
+
+def _tab_bar(titles, pages, on_select=None):
+    """Return a row of buttons that shows one page at a time.
+
+    Google Colab renders nothing for an ipywidgets Tab, so plain buttons stand
+    in for the tab headers and hide every page except the selected one.
+
+    Args:
+        titles: Button label for each page.
+        pages: Widgets to show one at a time, in the same order as titles.
+        on_select: Optional callback called with the selected page index.
+
+    Returns:
+        HBox: The row of buttons. The first page is selected initially.
+    """
+    buttons = [Button(description=title, layout=Layout(width="auto")) for title in titles]
+
+    def select(index):
+        for i, (button, page) in enumerate(zip(buttons, pages)):
+            button.button_style = "info" if i == index else ""
+            page.layout.display = None if i == index else "none"
+        if on_select is not None:
+            on_select(index)
+
+    for i, button in enumerate(buttons):
+        button.on_click(lambda _, i=i: select(i))
+    select(0)
+    return HBox(buttons)
 
 
 def odor_model():
@@ -222,14 +251,9 @@ Analyze the differences in the weight evolution for the Teacher and Control ense
 
     plot_button.on_click(button_plot_on_click_action)
 
-    tab = widgets.Tab()
-    tab.children = [VBox(
-        [learning_rule, PN_slider, plot_button, loading_output, output_plots[i]]) for
-                    i in range(6)]
-    tab.titles = ('Connectivity', 'Activity', 'Ensemble Strength', 'Weight Distribution', 'Network', 'Ensemble Weights')
+    # Setup the tabs; the controls are shared and each tab shows one plot
+    titles = ('Connectivity', 'Activity', 'Ensemble Strength', 'Weight Distribution', 'Network', 'Ensemble Weights')
+    tab_bar = _tab_bar(titles, output_plots, on_select=lambda index: update_text({'new': index}))
 
-    tab.observe(update_text, names='selected_index')
-
-    update_text({'new': 0})
-    display(tab, output_text)
+    display(VBox([tab_bar, learning_rule, PN_slider, plot_button, loading_output, *output_plots]), output_text)
     update_plot(learning_rule.value)
