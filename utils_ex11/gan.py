@@ -241,7 +241,7 @@ def plot_gan(generator, discriminator, N_Z=64):
             for batch, test_x in tqdm(
                 zip(range(N_TEST_BATCHES), test_dataset), total=N_TEST_BATCHES
             ):
-                loss.append(model.compute_loss(train_x))
+                loss.append(model.compute_loss(test_x))
             losses.loc[len(losses)] = np.mean(loss, axis=0)
             print(
                 "Epoch: {} | disc_loss: {} | gen_loss: {}".format(

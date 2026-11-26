@@ -125,7 +125,7 @@ def show_model(data_f, model_f, interactive: bool = True, data_scale=0.8):
             with output:
                 clear_output(wait=True)  # Clear the output widget
                 plt.figure(figsize=(6, 4))  # Ensure a consistent figure size
-                plot_decision_regions(X, D.astype(np.integer), clf=model)
+                plot_decision_regions(X, D.astype(int), clf=model)
                 plt.title(title)
                 plt.xlabel('X1')
                 plt.ylabel('X2')
@@ -145,7 +145,7 @@ def show_model(data_f, model_f, interactive: bool = True, data_scale=0.8):
         plot_model(perceptron, X, D)
 
     style = {'description_width': 'initial'}
-    simulation_speed_slider = FloatSlider(min=0, max=10, step=0.1, value=0, description='simulation speed:',
+    simulation_speed_slider = FloatSlider(min=0, max=10, step=0.1, value=0, description='frame delay:',
                                           style=style, layout=Layout(width='500px'))
     alpha_slider = FloatLogSlider(value=0.001, base=10, min=-4, max=0, step=0.1, description='Learning Rate',
                                   style=style, layout=Layout(width='500px'))
@@ -171,7 +171,7 @@ def show_model(data_f, model_f, interactive: bool = True, data_scale=0.8):
 
 def show_non_linear_data():
     X, D = generate_nonlinear_xor_data(0.1)
-    y = D.astype(np.integer)
+    y = D.astype(int)
 
     plt.scatter(X[y == 0, 0], X[y == 0, 1], marker='s', edgecolors='k', label='0')
     plt.scatter(X[y == 1, 0], X[y == 1, 1], marker='^', edgecolors='k', label='1')

@@ -28,6 +28,7 @@ def gan_pretrain():
     random_btn = widgets.Button(description='Generate random word')
     submit = widgets.Button(description='Generate')
     output_plot = Output()
+    model_cache = {}
 
     def update():
         try:
@@ -42,8 +43,11 @@ def gan_pretrain():
             else:
                 DEVICE = 'cpu'
 
-            # Load pre-trained model tokenizer (vocabulary)
-            model = BigGAN.from_pretrained('biggan-deep-256')
+            # Load the pre-trained model once per widget: from_pretrained re-reads
+            # 234 MB of weights, which made every click slow.
+            if 'model' not in model_cache:
+                model_cache['model'] = BigGAN.from_pretrained('biggan-deep-256')
+            model = model_cache['model']
 
             # Prepare a input
             truncation = 0.4
